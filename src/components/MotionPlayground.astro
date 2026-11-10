@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HomeHero from './HomeHero.astro';
+import RecentPhotos from './RecentPhotos.astro';
+import QuizCard from './QuizCard.astro';
+import { DEMO_RECENT_PHOTOS } from '../data/demo-recent-photos';
+import assets from '../assets/official-assets.json';
+---
+
+<BaseLayout title="Checkpoint Motion Playground" description="Laboratório local de movimento">
+  <div class="lab" id="conteudo">
+    <header class="lab-header"><div><p class="eyebrow">CHECKPOINT · LABORATÓRIO LOCAL</p><h1>Motion Playground</h1><p>Pequenos movimentos, grandes histórias.</p></div><a href="/">Voltar ao site ↗</a></header>
+    <main class="lab-layout">
+      <section class="controls" aria-label="Controles de movimento">
+        <p class="eyebrow">01 / ESCOLHA UMA CENA</p>
+        <label>Experimento <select id="experiment"><option value="korok">A · Korok</option><option value="photos">B · Polaroids</option><option value="quiz">C · Enquete</option><option value="level">D · Pixel Reveal</option></select></label>
+        <label>Variante <select id="variant"></select></label>
+        <p id="description" class="description"></p>
+        <div class="rule"></div><p class="eyebrow">02 / AJUSTE O MOVIMENTO</p>
+        <label>Duração <output id="duration-value"></output><input id="duration" type="range" min="250" max="1400" step="25" value="650" /></label>
+        <label>Distância <output id="distance-value"></output><input id="distance" type="range" min="0" max="200" step="10" value="100" /></label>
+        <label>Acomodação <output id="settle-value"></output><input id="settle" type="range" min="0" max="200" step="10" value="100" /></label>
+        <label>Intervalo <output id="delay-value"></output><input id="delay" type="range" min="0" max="250" step="10" value="100" /></label>
+        <label class="toggle"><input id="reduce" type="checkbox" /> Simular movimento reduzido</label>
+        <p id="system-reduce" class="note" hidden>Movimento reduzido também está ativo no sistema.</p>
+        <div class="actions"><button id="play" type="button">▶ &nbsp; Play / Replay</button><button id="cancel" class="secondary" type="button">Parar</button></div>
+        <p class="note">Sem reprodução automática em loop. Alterar controles interrompe e restaura a cena. Na enquete, toque nas alternativas para testar o feedback atual.</p>
+      </section>
+      <section class="preview-column" aria-label="Prévia do experimento"><div class="preview-heading"><span>PRÉVIA · SMARTPHONE</span><strong id="current-label"></strong></div>
+        <div class="phone"><div class="phone-inner" id="stage">
+          <div class="scene lab-home" data-scene="korok"><div class="scene-caption">UM ENCONTRO INESPERADO <span>A / HOME</span></div><HomeHero /></div>
+          <div class="scene lab-photos" data-scene="photos" hidden><div class="scene-caption">MEMÓRIAS DA CCXP <span>B / FOTOS</span></div><h2>Flagras mais recentes</h2><RecentPhotos photos={DEMO_RECENT_PHOTOS} /></div>
+          <div class="scene lab-quiz" data-scene="quiz" hidden><div class="scene-caption">ESCOLHA SEU LADO <span>C / ENQUETE</span></div><QuizCard staticPreview /><p class="scene-note">Toque em uma alternativa para testar a seleção.</p></div>
+          <div class="scene lab-level" data-scene="level" hidden><div class="scene-caption">CONCEITO FUTURO <span>D / NÍVEL</span></div><p class="level-label">Nível <b data-level>01</b> <small>· simulação</small></p><div class="demo-track"><div class="demo-fill"></div><span class="demo-marker"></span></div><div class="level-art"><div class="level-characters"><img src={assets.juh.avif} alt="Juh em pixel art" /><img src={assets.atila.avif} alt="Átila em pixel art" /></div><div class="pixel-grid" aria-hidden="true">{Array.from({length: 64}, () => <span></span>)}</div></div><p class="scene-note">Mesmos sprites: demonstração visual, sem evolução real.</p></div>
+        </div></div>
+      </section>
+    </main>
+  </div>
+</BaseLayout>
+<script>import '../scripts/motion-playground';</script>
+<style is:global>
+  body:has(.lab) { overflow: auto; background:#f1e8de; }
+  .lab { max-width: 1180px; margin: auto; padding: 32px 24px 64px; color:#392319; }
+  .lab-header { display:flex; justify-content:space-between; gap:20px; align-items:end; margin-bottom:32px; }
+  .lab-header h1 { font:400 clamp(36px, 5vw, 56px)/1 var(--font-display); margin:8px 0; }
+  .lab-header a { font-size:14px; font-weight:700; white-space:nowrap; }
+  .eyebrow, .preview-heading, .scene-caption { font-size:11px; font-weight:700; letter-spacing:.12em; color:#71804d; }
+  .lab-layout { display:grid; grid-template-columns:minmax(270px, 360px) minmax(0, 1fr); gap:32px; align-items:start; }
+  .controls { display:grid; gap:16px; padding:24px; border:1px solid #e2cdbd; border-radius:22px; background:#fffaf5; }
+  .controls label:not(.toggle) { display:grid; grid-template-columns:1fr auto; gap:7px; font-size:14px; font-weight:700; }
+  .controls select, .controls input[type=range] { grid-column:1 / -1; width:100%; }
+  .controls select { padding:11px; border:1px solid #d8c1b1; border-radius:10px; color:inherit; background:white; }
+  .controls input { accent-color:#5a741e; }
+  .controls output { color:#73804f; font-weight:600; }
+  .description,.note { font-size:13px; color:#765f50; line-height:1.5; }
+  .rule { height:1px; background:#eadcd0; }
+  .toggle { display:flex; gap:10px; align-items:center; font-size:14px; }
+  .actions { display:flex; gap:8px; }
+  .actions button { border:0; border-radius:12px; padding:12px 18px; background:#58731c; color:white; font-weight:700; }
+  .actions .secondary { background:#efe5d9; color:#392319; }
+  .preview-column { min-width:0; display:grid; justify-items:center; gap:12px; }
+  .preview-heading { width:min(100%, 390px); display:flex; justify-content:space-between; gap:8px; }
+  .preview-heading strong { color:#392319; text-align:right; }
+  .phone { width:min(100%, 390px); padding:8px; border:1px solid #d8c6b7; border-radius:32px; background:#fffaf5; box-shadow:0 12px 40px #4a2a171c; }
+  .phone-inner { position:relative; overflow:hidden; container-type:size; height:min(700px, 165vw); min-height:460px; border-radius:25px; background:var(--color-bg); }
+  .phone-inner > .scene { height:100%; position:relative; padding:28px 20px; }
+  .phone-inner > .scene[hidden] { display:none; }
+  .scene-caption { display:flex; justify-content:space-between; gap:8px; }
+  .scene-caption span { color:#b69781; }
+  .lab-home .home-hero { min-height:0; height:85%; justify-content:center; }
+  .lab-home .scene-composition, .lab-home .experience-progress, .lab-home .scroll-hint { display:none; }
+  .lab-home .welcome { flex:initial; width:100%; grid-template-rows:auto; padding:0; }
+  .lab-home .mascot-composition { min-height:130px; }
+  .lab-home .mascot { overflow:hidden; }
+  .lab-home .mascot img { bottom:0; }
+  .lab-photos, .lab-quiz, .lab-level { display:flex; flex-direction:column; }
+  .lab-photos h2 { margin:auto 0 20px; text-align:center; font-size:21px; }
+  .lab-photos .recent-photos { width:100%; margin-bottom:auto; }
+  .lab-quiz .quiz { margin:auto 0 16px; container-type:inline-size; }
+  .scene-note { margin:auto 0 0; text-align:center; font-size:12px; color:#8b7261; }
+  .lab-level .level-label { margin:80px 0 12px; font-size:20px; font-weight:700; }
+  .level-label small { color:#8b7261; font-size:12px; }
+  .demo-track { height:18px; background:#eaded2; border:1px solid #c3a895; border-radius:20px; position:relative; }
+  .demo-fill { position:absolute; inset:2px; background:#728a37; border-radius:20px; transform-origin:left; }
+  .demo-marker { position:absolute; right:0; top:50%; width:20px; height:20px; border:1px solid #785d48; border-radius:50%; background:#fffaf5; transform:translateY(-50%); }
+  .level-art { position:relative; margin:auto; width:200px; height:230px; }
+  .level-characters { height:100%; display:flex; justify-content:center; align-items:end; gap:8px; }
+  .level-characters img { height:200px; width:auto; }
+  .pixel-grid { position:absolute; inset:0; display:grid; grid-template-columns:repeat(8,1fr); grid-template-rows:repeat(8,1fr); pointer-events:none; }
+  .pixel-grid span { background:#c7d09a; opacity:0; }
+  @media(max-width:700px) { .lab { padding:20px 16px 40px; } .lab-header { align-items:start; } .lab-layout { grid-template-columns:1fr; } .preview-column { grid-row:1; } .controls { grid-row:2; } }
+</style>

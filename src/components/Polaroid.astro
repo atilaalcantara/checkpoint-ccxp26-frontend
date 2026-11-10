@@ -1,0 +1,72 @@
+---
+// Two stacked layers: the visitor's photo (object-fit: cover, clipped to the
+// frame's transparent window) underneath, the reusable frame PNG/WebP on
+// top. The crop happens here, in CSS, against the live image — never by
+// baking frame+photo into a combined file (see ASSET_OPTIMIZATION.md).
+import assets from '../assets/official-assets.json';
+
+interface Props {
+  src: string;
+  alt: string;
+  objectPosition?: string;
+}
+
+const { src, alt, objectPosition = 'center' } = Astro.props;
+const frame = assets.polaroidFrame;
+---
+
+<div class="polaroid">
+  <noscript>
+    <img class="polaroid-photo" src={src} alt={alt} style={`object-position: ${objectPosition}`} />
+    <img class="polaroid-frame" src={frame.src} width={frame.width} height={frame.height} alt="" />
+  </noscript>
+  <img
+    class="polaroid-photo"
+    data-src={src}
+    alt={alt}
+    style={`object-position: ${objectPosition}`}
+    decoding="async"
+  />
+  <img
+    class="polaroid-frame"
+    data-src={frame.src}
+    width={frame.width}
+    height={frame.height}
+    alt=""
+    aria-hidden="true"
+    decoding="async"
+  />
+</div>
+
+<style>
+  .polaroid {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 420 / 462; /* intrinsic ratio of the published frame asset */
+    /* Defense in depth: even if the photo's own box were ever computed a
+       hair larger than the window below (rounding, a future frame asset
+       swap, an unusually extreme aspect ratio), nothing can visually escape
+       the Polaroid's own box. */
+    overflow: hidden;
+    border-radius: 4%;
+  }
+
+  /* Extend beneath the frame window so sub-pixel rounding cannot leave gaps. */
+  .polaroid-photo {
+    position: absolute;
+    inset: 9.5% 8% 20.5%;
+    width: auto;
+    height: auto;
+    object-fit: cover;
+    border-radius: 2%;
+  }
+
+  .polaroid-frame {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+</style>

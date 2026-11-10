@@ -1,0 +1,133 @@
+---
+import assets from '../assets/official-assets.json';
+import SectionHeader from './SectionHeader.astro';
+import RecentPhotos from './RecentPhotos.astro';
+---
+
+<div class="fotos-screen page-container">
+  <SectionHeader
+    icon={assets.cameraFotos}
+    title="Fotos"
+    subtitle="Compartilhe seus flagras da gente na CCXP!"
+    titleId="photos-title"
+    reward="+2 XP ao enviar uma foto"
+  />
+
+  <div class="section-content">
+    <div class="photo-panel">
+      <h3 class="photo-panel-title section-content-title">Flagras mais recentes</h3>
+      <RecentPhotos photos={[]} />
+    </div>
+  </div>
+
+  <div class="photo-actions">
+    <button type="button" class="button-primary" data-photo-trigger>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <circle cx="12" cy="13" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      Tirar ou enviar uma foto
+    </button>
+    <input type="file" accept="image/*" id="photo-input" class="visually-hidden" data-photo-input aria-label="Selecionar fotografia" />
+
+    <dialog class="photo-dialog" data-photo-preview aria-labelledby="photo-dialog-title" aria-describedby="photo-dialog-status">
+      <div class="photo-preview">
+        <h3 id="photo-dialog-title" class="photo-dialog-title">Sua foto</h3>
+        <div class="photo-crop" data-photo-crop tabindex="0" role="group" aria-label="Posição da foto. Arraste ou use as setas para ajustar o enquadramento.">
+          <img class="photo-preview-image" data-photo-preview-image alt="Prévia da fotografia dentro da moldura" draggable="false" />
+          <img class="photo-crop-frame" src={assets.polaroidFrame.src} alt="" aria-hidden="true" draggable="false" />
+        </div>
+        <p class="photo-crop-hint" data-photo-crop-hint>Arraste a foto para ajustar o enquadramento</p>
+        <p id="photo-dialog-status" class="photo-preview-status" role="status" aria-live="polite">
+          Prévia local. A foto será publicada após o envio.
+        </p>
+        <button type="button" class="button-primary" data-photo-submit>Enviar foto</button>
+        <button type="button" class="button-secondary" data-photo-clear>Escolher outra</button>
+      </div>
+    </dialog>
+    <div class="photo-complete" data-photo-complete hidden role="status"><strong>Uma foto foi salva!</strong><span>Obrigado por fazer parte da nossa aventura.</span></div>
+  </div>
+</div>
+
+<script>
+  import '../scripts/photo-upload';
+</script>
+
+<style>
+  .fotos-screen {
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding-bottom: clamp(var(--space-3), 3cqh, var(--space-6));
+  }
+
+  .photo-panel {
+    width:100%;
+    padding-inline: var(--space-4);
+  }
+
+  .photo-panel-title {
+    margin: 0 0 clamp(var(--space-2), 2cqh, var(--space-4));
+  }
+
+  .photo-actions {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-4);
+    text-align: center;
+  }
+
+  .photo-actions .button-primary { width: min(100%, 400px); box-shadow: var(--shadow-card); }
+  .photo-actions .button-primary[hidden] { display:none; }
+
+  .photo-dialog {
+    box-sizing: border-box;
+    width: min(calc(100% - 2 * var(--space-6)), 340px);
+    max-height: calc(100dvh - 2 * var(--space-6));
+    margin: auto;
+    padding: var(--space-6);
+    overflow: auto;
+    border: var(--stroke);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow-card);
+  }
+  .photo-dialog::backdrop { background: rgb(35 22 16 / 55%); }
+  .photo-preview {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+    text-align: center;
+  }
+  .photo-dialog-title { margin: 0; font: 700 22px/1.25 var(--font-ui); }
+  .photo-complete { display:grid; gap:var(--space-1); color:var(--color-text-secondary); font-size:14px; }
+  .photo-complete strong { color:var(--color-olive); font-size:19px; }
+  .photo-complete small { font-size:12px; font-weight:400; }
+  .photo-complete[hidden] { display:none; }
+
+  .photo-crop { position:relative; width:min(190px, 30dvh); aspect-ratio:420 / 462; overflow:hidden; touch-action:none; cursor:grab; }
+  .photo-crop:active { cursor:grabbing; }
+  .photo-crop:focus-visible { outline:3px solid var(--color-focus); outline-offset:3px; }
+  .photo-crop[hidden], .photo-crop-hint[hidden] { display:none; }
+  .photo-preview-image { position:absolute; inset:9.5% 8% 20.5%; width:84%; height:70%; object-fit:cover; border-radius:2%; user-select:none; }
+  .photo-crop-frame { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; user-select:none; }
+  .photo-crop-hint { margin:0; color:var(--color-text-secondary); font-size:13px; }
+
+  .photo-preview-status { margin: 0; color: var(--color-text-secondary); font-size: 14px; text-align: center; }
+
+  .button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-5);
+    border: var(--stroke);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-weight: 600;
+    font-size: 14px;
+  }
+</style>

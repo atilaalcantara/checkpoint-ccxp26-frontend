@@ -1,0 +1,51 @@
+---
+// Shared opening header for the Fotos and Enquete screens: a single
+// illustrative AVIF icon, the Jersey 10 decorative
+// title and the Inter subtitle — same hierarchy as the Home's identity
+// block, just swapping the PNG wordmark for a section icon.
+interface ImageSet {
+  avif: string;
+  width: number;
+  height: number;
+}
+
+interface Props {
+  icon: ImageSet;
+  title: string;
+  subtitle: string;
+  titleId: string;
+  reward?: string;
+}
+
+const { icon, title, subtitle, titleId, reward } = Astro.props;
+---
+
+<header class="section-header">
+  <img class="section-icon" data-src={icon.avif} width={icon.width} height={icon.height} alt="" aria-hidden="true" decoding="async" />
+  <noscript>
+    <img class="section-icon" src={icon.avif} width={icon.width} height={icon.height} alt="" />
+  </noscript>
+  <h2 id={titleId} class="section-title">{title}</h2>
+  <p class="section-lead">{subtitle}{reward && <span class="section-reward" data-section-reward>{reward}</span>}</p>
+</header>
+
+<style>
+  .section-header {
+    text-align: center;
+    padding-top: clamp(var(--space-4), 4cqh, var(--space-10));
+  }
+
+  .section-icon {
+    height: clamp(64px, 12cqh, 100px);
+    width: auto;
+    margin: 0 auto var(--space-2);
+  }
+  .section-reward { display:block; margin-top:var(--space-1); color:var(--color-olive); font:600 13px/1.25 var(--font-ui); }
+  .section-reward[hidden] { display:none; }
+  @media (max-height:720px) {
+    .section-header { padding-top:var(--space-3); }
+    .section-icon { height:48px; margin-bottom:var(--space-1); }
+    .section-header :global(.section-title) { font-size:38px; margin-bottom:var(--space-1); }
+    .section-header :global(.section-lead) { font-size:15px; line-height:1.2; }
+  }
+</style>

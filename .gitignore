@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.astro/
+.playwright-mcp/
+.DS_Store
+.env
+.env.*
+!.env.example
+# Prompts locais/históricos; não fazem parte do produto.
+CONTRATO_API.md
+PROMPT_INTEGRACAO_BACKEND.md
+PROMPT_BACKEND.md
+# Originais e cópias locais de artes ainda não reveladas.
+PersonagensENiveis/
+public/assets/characters/Nivel[2-9]*

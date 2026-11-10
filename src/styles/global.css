@@ -1,0 +1,150 @@
+@import './tokens.css';
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../assets/fonts/inter-latin-variable.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Jersey 10';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/jersey-10-latin.woff2') format('woff2');
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-bg);
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: 400 16px/1.5 var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word;
+  overflow: hidden;
+}
+
+h1, h2, p { margin: 0; }
+img, svg { display: block; max-width: 100%; }
+img { height: auto; }
+/* The <picture> wrapper is otherwise an unstyled inline box; `contents`
+   lets the inner <img>'s own display/sizing rules apply as if it weren't there. */
+picture { display: contents; }
+a { color: inherit; }
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+.xp-feedback { position:fixed; z-index:50; top:calc(env(safe-area-inset-top) + 12px); left:50%; transform:translateX(-50%); padding:6px 12px; border:1px solid var(--color-border); border-radius:var(--radius-pill); background:var(--color-surface); color:var(--color-olive); box-shadow:var(--shadow-card); font-size:13px; font-weight:700; white-space:nowrap; pointer-events:none; }
+.xp-feedback[hidden] { display:none; }
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.page-container {
+  width: min(
+    calc(100% - max(var(--content-gutter), env(safe-area-inset-left)) - max(var(--content-gutter), env(safe-area-inset-right))),
+    var(--content-max)
+  );
+  margin-inline: auto;
+}
+
+/* Matching content anchors across Enquete and Fotos. */
+.section-content { display:grid; align-content:start; justify-items:center; flex:1; width:100%; min-width:0; padding-top:clamp(24px, 10cqh, 80px); padding-bottom:var(--space-3); }
+.section-content-title { margin:0; text-align:center; font-size:clamp(20px, 5.5cqi, 24px); line-height:1.5; font-weight:700; }
+
+.section-title {
+  margin-bottom: var(--space-3);
+  font: 400 clamp(44px, 12vw, 56px)/1.05 var(--font-display);
+  text-align: center;
+}
+
+.section-lead {
+  max-width: 27ch;
+  margin: 0 auto;
+  color: var(--color-text);
+  text-align: center;
+  font-size: clamp(17px, 4.5cqi, 19px);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--button-height);
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--fill-button);
+  box-shadow: 0 3px 7px rgb(59 33 22 / 12%), inset 0 1px 0 rgb(255 255 255 / 14%);
+  color: var(--color-on-primary);
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+
+.button-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+@media (hover: hover) {
+  .button-primary:hover { background: var(--color-olive-hover); }
+}
+
+.button-primary:active { background: var(--color-olive-hover); }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.assistive-text {
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-align: center;
+}
+
+.skip-link {
+  position: absolute;
+  z-index: 2;
+  top: var(--space-3);
+  left: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  transform: translateY(calc(-100% - var(--space-6)));
+}
+
+.skip-link:focus { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

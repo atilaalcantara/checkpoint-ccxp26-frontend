@@ -1,0 +1,66 @@
+---
+import assets from '../assets/official-assets.json';
+import SectionHeader from './SectionHeader.astro';
+import QuizCard from './QuizCard.astro';
+---
+
+<div class="enquete-screen page-container">
+  <SectionHeader
+    icon={assets.enqueteIcon}
+    title="Enquete"
+    subtitle="Ajude a gente a resolver as discussões do casal!"
+    titleId="poll-title"
+    reward="+1 XP por resposta"
+  />
+
+  <div class="quiz-wrap section-content">
+    <QuizCard />
+  </div>
+
+  <p class="scroll-hint">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+      <path d="m5 5 9 9 9-9M5 14l9 9 9-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    <span>Ajude a gente ainda mais!</span>
+  </p>
+</div>
+
+<script>
+  import '../scripts/quiz';
+</script>
+
+<style>
+  .enquete-screen {
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding-bottom: clamp(var(--space-3), 3cqh, var(--space-6));
+  }
+
+  /* Results need room for two rows without making this screen taller than the viewport. */
+  .enquete-screen[data-results-active] :global(.section-lead) { display:none; }
+  .enquete-screen[data-results-active] .quiz-wrap { align-content:center; padding-top:var(--space-2); }
+  @media (max-height:850px), (max-width:360px) {
+    .enquete-screen[data-results-active] .scroll-hint { font-size:12px; gap:0; }
+    .enquete-screen[data-results-active] .scroll-hint svg { width:20px; height:20px; }
+  }
+  @media (max-height:600px) {
+    .enquete-screen[data-results-active] { padding-bottom:var(--space-1); }
+    .enquete-screen[data-results-active] .scroll-hint span { display:none; }
+    .enquete-screen[data-results-active] .quiz-wrap { padding-top:var(--space-1); padding-bottom:var(--space-1); }
+  }
+
+  .scroll-hint { display: grid; justify-items: center; gap: var(--space-1); font-size: 14px; text-align: center; color: var(--color-olive); }
+  .scroll-hint svg {
+    /* Unlike the static chevron this screen used before the reorder, Enquete
+       now has a screen below it (Fotos) — same animated "pull up" cue as
+       the Home, suggesting the same downward swipe. */
+    animation: pull-hint 1.6s ease-in-out infinite;
+  }
+
+  @keyframes pull-hint {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+</style>

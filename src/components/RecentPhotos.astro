@@ -1,0 +1,117 @@
+---
+import Polaroid from './Polaroid.astro';
+import assets from '../assets/official-assets.json';
+import type { RecentPhoto } from '../types/recent-photo';
+
+interface Props {
+  photos: RecentPhoto[];
+}
+
+const { photos } = Astro.props;
+// The product always shows exactly three server-selected photos (design.markdown
+// §4.2). Any other count (today: zero, since there is no backend yet) falls
+// back to a single elegant empty state rather than a partially-filled fan.
+const [left, center, right] = photos.length === 3 ? photos : [];
+---
+
+<div class="recent-photos" data-recent-photos>
+  {center ? (
+    <div class="photo-fan" role="group" aria-label="Três fotos recentes enviadas por visitantes">
+      <div class="fan-item fan-item--left"><Polaroid src={left.src} alt={left.alt} objectPosition={left.objectPosition} /></div>
+      <div class="fan-item fan-item--center"><Polaroid src={center.src} alt={center.alt} objectPosition={center.objectPosition} /></div>
+      <div class="fan-item fan-item--right"><Polaroid src={right.src} alt={right.alt} objectPosition={right.objectPosition} /></div>
+    </div>
+  ) : (
+    <p class="photo-empty">Em breve, os primeiros flagras da CCXP aparecem aqui.</p>
+  )}
+</div>
+
+<dialog class="photo-viewer" data-photo-viewer aria-labelledby="photo-viewer-title">
+  <div class="photo-viewer-content">
+    <div class="photo-viewer-header">
+      <h3 id="photo-viewer-title">Flagras recentes</h3>
+      <button type="button" class="photo-viewer-close" data-photo-viewer-close aria-label="Fechar foto">×</button>
+    </div>
+    <div class="photo-viewer-swipe" data-photo-viewer-swipe aria-label="Arraste para o lado para ver outras fotos">
+      <div class="photo-viewer-polaroid" data-photo-viewer-card>
+        <img class="photo-viewer-image" data-photo-viewer-image alt="" draggable="false" />
+        <img class="photo-viewer-frame" src={assets.polaroidFrame.src} alt="" aria-hidden="true" draggable="false" />
+      </div>
+    </div>
+    <div class="photo-viewer-controls">
+      <button type="button" data-photo-viewer-prev aria-label="Foto anterior">‹</button>
+      <p data-photo-viewer-position aria-live="polite"></p>
+      <button type="button" data-photo-viewer-next aria-label="Próxima foto">›</button>
+    </div>
+    <p class="photo-viewer-hint" data-photo-viewer-hint>Arraste para o lado para ver mais</p>
+  </div>
+</dialog>
+
+<style is:global>
+  .recent-photos { container-type: inline-size; }
+
+  .photo-fan {
+    position: relative;
+    height: min(44cqi, 29cqh);
+    max-height: 210px;
+    margin-inline: auto;
+    /* Keeps the rotated side Polaroids from visually touching the panel's
+       own rounded corners/padding. */
+    padding-inline: 8cqi;
+  }
+
+  .fan-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(34cqi, 22cqh);
+    max-width: 150px;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 6px 10px rgb(59 33 22 / 12%));
+  }
+
+  .fan-item--left {
+    z-index: 1;
+    transform: translate(calc(-50% - 23cqi), -50%) rotate(-12deg);
+  }
+
+  .fan-item--right {
+    z-index: 1;
+    transform: translate(calc(-50% + 23cqi), -50%) rotate(12deg);
+  }
+
+  .fan-item--center {
+    z-index: 2;
+    width: min(40cqi, 26cqh);
+    max-width: 176px;
+  }
+
+  .photo-empty {
+    margin: 0;
+    padding: var(--space-8) 0;
+    text-align: center;
+    color: var(--color-text-secondary);
+  }
+  .recent-photos .polaroid { position:relative; width:100%; aspect-ratio:420 / 462; overflow:hidden; border-radius:4%; }
+  .recent-photos .polaroid-photo { position:absolute; inset:9.5% 8% 20.5%; width:auto; height:auto; object-fit:cover; border-radius:2%; }
+  .recent-photos .polaroid-frame { position:absolute; inset:0; z-index:1; width:100%; height:100%; pointer-events:none; }
+  .photo-fan-button { display:block; width:100%; padding:0; border:0; background:transparent; cursor:pointer; }
+  .photo-fan-button:focus-visible { outline:3px solid var(--color-focus); outline-offset:4px; border-radius:6%; }
+  .photo-viewer { box-sizing:border-box; width:min(calc(100% - 40px), 380px); max-height:calc(100dvh - 40px); margin:auto; padding:var(--space-4); overflow:auto; border:var(--stroke); border-radius:var(--radius-xl); background:var(--color-surface); color:var(--color-text); box-shadow:var(--shadow-card); }
+  .photo-viewer::backdrop { background:rgb(35 22 16 / 55%); }
+  .photo-viewer-content { display:grid; gap:var(--space-2); justify-items:center; }
+  .photo-viewer-header { width:100%; display:flex; justify-content:space-between; align-items:center; gap:var(--space-2); }
+  .photo-viewer-header h3 { margin:0; font:700 20px/1.2 var(--font-ui); }
+  .photo-viewer-close, .photo-viewer-controls button { display:grid; place-items:center; width:44px; height:44px; padding:0; border:var(--stroke); border-radius:50%; background:var(--color-surface); color:var(--color-text); font:400 30px/1 var(--font-ui); cursor:pointer; }
+  .photo-viewer button:focus-visible { outline:3px solid var(--color-focus); outline-offset:2px; }
+  .photo-viewer-controls button:disabled { opacity:.35; cursor:default; }
+  .photo-viewer-swipe { width:min(270px, 55dvh, 100%); overflow:hidden; touch-action:pan-y; cursor:grab; }
+  .photo-viewer-swipe:active { cursor:grabbing; }
+  .photo-viewer-polaroid { position:relative; width:100%; aspect-ratio:420 / 462; overflow:hidden; border-radius:4%; user-select:none; }
+  .photo-viewer-image { position:absolute; inset:9.5% 8% 20.5%; width:84%; height:70%; object-fit:cover; border-radius:2%; user-select:none; }
+  .photo-viewer-frame { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; user-select:none; }
+  .photo-viewer-controls { display:flex; align-items:center; justify-content:center; gap:var(--space-5); }
+  .photo-viewer-controls p, .photo-viewer-hint { margin:0; color:var(--color-text-secondary); font-size:14px; }
+  .photo-viewer-hint { font-size:12px; }
+  .photo-viewer-hint[hidden] { display:none; }
+</style>

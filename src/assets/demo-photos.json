@@ -1,0 +1,17 @@
+{
+  "demo-photo-1": {
+    "width": 360,
+    "height": 330,
+    "avif": "/assets/demo/demo-photo-1.b3e96cea8f.avif"
+  },
+  "demo-photo-2": {
+    "width": 360,
+    "height": 330,
+    "avif": "/assets/demo/demo-photo-2.47ef2709cd.avif"
+  },
+  "demo-photo-3": {
+    "width": 360,
+    "height": 330,
+    "avif": "/assets/demo/demo-photo-3.135a039abb.avif"
+  }
+}

@@ -1,0 +1,60 @@
+---
+import BottomNavigation from './BottomNavigation.astro';
+
+// Keep the component available for a future return without rendering its controls.
+const showBottomNavigation = false;
+---
+
+<div class:list={['experience-shell', { 'has-bottom-navigation': showBottomNavigation }]} data-experience>
+  <main id="conteudo" class="screen-viewport" data-screen-viewport tabindex="-1" aria-label="Telas do Checkpoint CCXP26">
+    <slot />
+  </main>
+  {showBottomNavigation && <BottomNavigation />}
+</div>
+
+<script>
+  import '../scripts/screen-navigation';
+  import '../scripts/defer-images';
+  import '../scripts/progression-ui';
+</script>
+
+<style>
+  .experience-shell { display: grid; grid-template-rows: minmax(0, 1fr); height: 100vh; height: 100dvh; }
+  .experience-shell.has-bottom-navigation { grid-template-rows: minmax(0, 1fr) auto; }
+  .screen-viewport {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: auto;
+    scrollbar-width: none;
+  }
+  .screen-viewport::-webkit-scrollbar { display: none; }
+  .screen-viewport[data-motion] { scroll-snap-type: none; }
+  .screen-viewport[data-motion="dragging"] { user-select: none; }
+  .screen-viewport:focus-visible,
+  .screen-viewport :global(.screen-scroll:focus-visible) { outline: none; }
+  .screen-viewport :global(.experience-screen) { height: 100%; scroll-snap-align: start; scroll-snap-stop: always; overflow: hidden; }
+  @media (prefers-reduced-motion: no-preference) {
+    .screen-viewport :global([data-entrance-pending] .section-icon),
+    .screen-viewport :global([data-entrance-pending] .section-title),
+    .screen-viewport :global([data-entrance-pending] .section-lead),
+    .screen-viewport :global([data-entrance-pending] .quiz-prompt),
+    .screen-viewport :global([data-entrance-pending] .quiz-option),
+    .screen-viewport :global([data-entrance-pending] .photo-panel-title),
+    .screen-viewport :global([data-entrance-pending] .fan-item),
+    .screen-viewport :global([data-entrance-pending] [data-photo-trigger]),
+    .screen-viewport :global([data-fan-pending] .fan-item),
+    .screen-viewport :global([data-fan-pending] [data-photo-trigger]) { opacity: 0; }
+  }
+  .screen-viewport :global(.screen-scroll) {
+    position: relative;
+    container-type: size;
+    height: 100%;
+    overflow: auto;
+    overscroll-behavior-y: contain;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    scroll-padding-block: var(--space-4);
+  }
+</style>

@@ -1,0 +1,88 @@
+---
+---
+
+<div class="experience-progress" data-community-progress>
+  <div class="progress-heading">
+    <p id="progress-title" class="level" data-level-name>Carregando progresso…</p>
+    <span class="points" data-level-points></span>
+  </div>
+  <div class="progress-track" style="--progress-position: 0%">
+    <progress
+      aria-labelledby="progress-title"
+      aria-valuetext="Progresso indisponível"
+      value="0"
+      max="1"
+    >Progresso indisponível</progress>
+    <span class="progress-fill" data-progress-fill style="transform: scaleX(0)" aria-hidden="true"></span>
+    <span class="track-segments" aria-hidden="true"></span>
+    <span class="progress-marker" aria-hidden="true"></span>
+  </div>
+  <p class="progress-note" role="status">Consultando progresso da comunidade…</p>
+</div>
+
+<style>
+  .experience-progress {
+    padding: clamp(var(--space-3), 2.4cqh, var(--space-5));
+    border: var(--stroke);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .progress-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+    margin-bottom: clamp(var(--space-2), 1.4cqh, var(--space-3));
+  }
+
+  .level { margin: 0; font: 700 clamp(20px, 2.8cqh, 24px)/1.2 var(--font-ui); }
+  .points { color: var(--color-text-secondary); font-size: clamp(14px, 1.9cqh, 16px); font-weight: 600; }
+
+  .progress-track { position: relative; height: var(--progress-track-height); }
+
+  progress {
+    display: block;
+    appearance: none;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: var(--stroke);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-muted);
+    color: var(--color-olive);
+  }
+
+  progress::-webkit-progress-bar { background: var(--color-surface-muted); }
+  progress::-webkit-progress-value { background: transparent; }
+  progress::-moz-progress-bar { background: transparent; }
+
+  .progress-fill { position:absolute; inset:1px; border-radius:var(--radius-pill); background:var(--color-olive); transform-origin:left; transition:transform 400ms var(--ease-standard); pointer-events:none; }
+  .progress-note { margin:var(--space-1) 0 0; color:var(--color-text-secondary); font-size:11px; }
+
+  .track-segments {
+    position: absolute;
+    inset: 1px;
+    border-radius: var(--radius-pill);
+    background: repeating-linear-gradient(to right, transparent 0, transparent calc(10% - 1px), var(--color-border) calc(10% - 1px), var(--color-border) 10%);
+    opacity: .55;
+    pointer-events: none;
+  }
+  .progress-marker {
+    position: absolute;
+    top: 50%;
+    left: clamp(calc(var(--progress-marker-size) / 2), var(--progress-position), calc(100% - var(--progress-marker-size) / 2));
+    display: grid;
+    place-items: center;
+    width: var(--progress-marker-size);
+    height: var(--progress-marker-size);
+    border: 1px solid var(--color-text-secondary);
+    border-radius: 50%;
+    background: var(--color-surface);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .progress-marker::after { content: ''; width: var(--space-2); height: var(--space-2); border-radius: 50%; background: var(--color-border); }
+</style>

@@ -1,0 +1,30 @@
+---
+import '../styles/global.css';
+import uiFont from '../assets/fonts/inter-latin-variable.woff2?url';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#FFF7EF" />
+    <link rel="icon" type="image/avif" href="/favicon.avif" />
+    <!-- The eager, high-priority logo is discovered by the preload scanner. -->
+    <link rel="preload" href={uiFont} as="font" type="font/woff2" crossorigin />
+    <title>{title}</title>
+  </head>
+  <body>
+    <noscript><style>img[data-src] { display: none; }</style></noscript>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <slot />
+  </body>
+</html>

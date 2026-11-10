@@ -1,0 +1,71 @@
+:root {
+  color-scheme: light;
+
+  --color-bg: #fff7ef;
+  --color-surface: #fff9f3;
+  --color-surface-muted: #f9ece2;
+  --color-text: #3b2116;
+  --color-text-secondary: #6d4d3b;
+  --color-olive: #58751b;
+  --color-olive-hover: #486317;
+  --color-olive-soft: #edf2d6;
+  --color-olive-border: #648128;
+  --color-border: #d9c4b6;
+  --color-lavender: #ede2f1;
+  --color-amber: #f5a623;
+  --color-danger: #b13c37;
+  --color-focus: #486317;
+  --color-on-primary: #fff;
+
+  --font-ui: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Jersey 10', 'Inter', sans-serif;
+  --logo-max-width: 360px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+  --stroke: 1px solid var(--color-border);
+  --shadow-card: 0 5px 16px rgb(59 33 22 / 6%);
+  --fill-capsule: linear-gradient(155deg, color-mix(in srgb, var(--color-olive) 88%, var(--color-on-primary)), var(--color-olive) 55%, var(--color-olive-hover));
+  --fill-button: linear-gradient(180deg, color-mix(in srgb, var(--color-olive) 90%, var(--color-amber)), var(--color-olive) 58%, var(--color-olive-hover));
+  --shadow-capsule: 0 2px 4px rgb(59 33 22 / 10%), inset 0 1px 0 rgb(255 255 255 / 18%);
+
+  --content-max: 480px;
+  --content-gutter: 20px;
+  --scene-max: 520px;
+  --section-gap: 64px;
+  --touch-target: 44px;
+  --button-height: 52px;
+  --navigation-height: 80px;
+  --navigation-item-max: 112px;
+  --progress-track-height: 20px;
+  --progress-marker-size: 22px;
+  --duration-fast: 140ms;
+  --duration-normal: 220ms;
+  --ease-standard: cubic-bezier(.2, .8, .2, 1);
+  --duration-container: 280ms;
+  --duration-feedback: 150ms;
+  --ease-container: cubic-bezier(.2, .8, .2, 1);
+}
+
+@media (max-width: 359px) {
+  :root { --content-gutter: 16px; --section-gap: 48px; }
+}
+
+@media (min-width: 768px) {
+  :root { --section-gap: 80px; }
+}

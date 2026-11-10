@@ -1,0 +1,52 @@
+{
+  "logo": {
+    "width": 720,
+    "height": 213,
+    "avif": "/assets/branding/checkpoint-ccxp26-logo.c062877445.avif"
+  },
+  "juh": {
+    "width": 191,
+    "height": 448,
+    "avif": "/assets/characters/Nivel1juhDesconhecidos.d7a24a3c38.avif"
+  },
+  "atila": {
+    "width": 184,
+    "height": 448,
+    "avif": "/assets/characters/Nivel1atilaDesconhecidos.cf99614b8f.avif"
+  },
+  "korok": {
+    "width": 202,
+    "height": 260,
+    "avif": "/assets/mascot/korok.70b8e471a5.avif"
+  },
+  "house": {
+    "width": 131,
+    "height": 128,
+    "src": "/assets/icons/navigation/houseGuideBar.bda6e4e46f.avif"
+  },
+  "camera": {
+    "width": 153,
+    "height": 128,
+    "src": "/assets/icons/navigation/cameraGuideBar.02446e0be6.avif"
+  },
+  "poll": {
+    "width": 142,
+    "height": 128,
+    "src": "/assets/icons/navigation/enqueteGuideBar.5013cad4e1.avif"
+  },
+  "cameraFotos": {
+    "width": 314,
+    "height": 220,
+    "avif": "/assets/icons/sections/cameraFotos.dec2ab18c3.avif"
+  },
+  "enqueteIcon": {
+    "width": 267,
+    "height": 220,
+    "avif": "/assets/icons/sections/enqueteIcon.9bf2c85216.avif"
+  },
+  "polaroidFrame": {
+    "width": 420,
+    "height": 462,
+    "src": "/assets/frames/molduraPolaroidUnica.9072fe280b.avif"
+  }
+}

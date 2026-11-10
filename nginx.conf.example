@@ -1,0 +1,84 @@
+# Exemplo de configuração Nginx para o Checkpoint CCXP26 (hospedagem própria).
+#
+# Este arquivo é apenas um EXEMPLO de referência: não altera nenhum servidor
+# remoto. Adapte `server_name`, `root` e os caminhos de certificado ao
+# ambiente real antes de usar.
+#
+# Estratégia de cache (ver ASSET_OPTIMIZATION.md, seção 13):
+#   1. `dist/_astro/*`      — nomes com hash de conteúdo gerados pelo Vite
+#                              (CSS, JS, fontes, o WebP do cenário). Podem
+#                              receber cache "para sempre": se o conteúdo
+#                              mudar, o nome do arquivo muda junto.
+#   2. `dist/assets/*`      — imagens de personagens/logo/ícones, geradas
+#                              por scripts/prepare-official-assets.mjs, que
+#                              agora também inclui um hash de conteúdo no
+#                              nome (ex.: korok.67f2c345c6.avif). Mesma
+#                              política de cache longo e seguro do item 1.
+#   3. HTML (`index.html`)  — não tem hash no nome; precisa ser revalidado
+#                              a cada visita para que deploys apareçam sem
+#                              exigir um "hard refresh" do visitante.
+#   4. Compressão           — gzip cobre o fallback universal; Brotli (se o
+#                              módulo estiver disponível) comprime melhor o
+#                              texto (HTML/CSS/JS) com menos CPU no runtime
+#                              por já vir pré-comprimido estaticamente aqui.
+#                              Imagens (AVIF/WebP/PNG) já são formatos
+#                              binários comprimidos: recomprimi-las no Nginx
+#                              não economiza bytes relevantes e só gasta CPU
+#                              — por isso ficam de fora dos tipos compressíveis.
+
+server {
+  listen 443 ssl http2;
+  server_name checkpoint.example.com; # TODO: domínio real.
+
+  ssl_certificate     /etc/letsencrypt/live/checkpoint.example.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/checkpoint.example.com/privkey.pem;
+
+  root /var/www/checkpoint-ccxp26/dist;
+  index index.html;
+
+  # --- Compressão (apenas texto; imagens já vêm comprimidas) ---
+  gzip on;
+  gzip_vary on;
+  gzip_comp_level 6;
+  gzip_min_length 256;
+  gzip_types text/plain text/css application/javascript application/json
+             image/svg+xml font/woff2 text/xml application/xml;
+
+  # Requer o módulo ngx_brotli (compilado ou via pacote da distro).
+  # Comente estas duas linhas se o módulo não estiver disponível.
+  brotli on;
+  brotli_comp_level 5;
+  brotli_types text/plain text/css application/javascript application/json
+               image/svg+xml font/woff2 text/xml application/xml;
+
+  # --- 1-2. Assets com hash de conteúdo no nome: cache "para sempre" ---
+  # Cobre tanto dist/_astro/ (hash do Vite) quanto dist/assets/ (hash do
+  # pipeline próprio em scripts/prepare-official-assets.mjs). Um novo
+  # deploy com conteúdo diferente gera um nome de arquivo diferente, então
+  # nenhum visitante fica preso a uma versão antiga em cache.
+  location ~* ^/(_astro|assets)/ {
+    add_header Cache-Control "public, max-age=31536000, immutable" always;
+    try_files $uri =404;
+  }
+
+  # Ícone e licenças de fonte: estáticos, mudam raramente, mas sem hash no
+  # nome. Cache moderado + validação por ETag evita tanto bytes
+  # desnecessários quanto o risco de servir uma versão desatualizada por
+  # muito tempo.
+  location ~* ^/(favicon\.svg|licenses/) {
+    add_header Cache-Control "public, max-age=86400" always;
+    try_files $uri =404;
+  }
+
+  # --- 3. HTML: sempre revalidado, nunca cacheado "às cegas" ---
+  location / {
+    add_header Cache-Control "no-cache" always;
+    try_files $uri $uri/ /index.html;
+  }
+
+  # Evita servir os assets originais (não otimizados) caso acabem
+  # publicados por engano fora de source-assets/ e background.png na raiz
+  # do projeto (nenhum dos dois deveria existir em dist/, mas o bloqueio
+  # custa nada e documenta a intenção).
+  location ~* \.(psd|ai|sketch)$ { deny all; }
+}

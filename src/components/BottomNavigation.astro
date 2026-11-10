@@ -1,0 +1,97 @@
+---
+import assets from '../assets/official-assets.json';
+const items = [
+  { id: 'inicio', label: 'Início', icon: assets.house.src, width: 32 },
+  { id: 'enquete', label: 'Enquete', icon: assets.poll.src, width: 33 },
+  { id: 'fotos', label: 'Fotos', icon: assets.camera.src, width: 32 },
+];
+---
+
+<div class="navigation-area">
+  <nav class="bottom-navigation" data-bottom-navigation aria-label="Navegação principal">
+    <span class="navigation-capsule" data-navigation-capsule aria-hidden="true"></span>
+    {items.map(({ id, label, icon, width }, index) => (
+      <a href={`#${id}`} data-screen-link={id} draggable="false" aria-current={index === 0 ? 'page' : undefined}>
+        <span class="navigation-icon" style={`--navigation-icon: url('${icon}'); --icon-width: ${width}px`} aria-hidden="true"></span>
+        <span>{label}</span>
+      </a>
+    ))}
+  </nav>
+</div>
+
+<style>
+  .navigation-area {
+    padding: var(--space-2) max(var(--space-4), env(safe-area-inset-right)) max(var(--space-3), env(safe-area-inset-bottom)) max(var(--space-4), env(safe-area-inset-left));
+    background: var(--color-bg);
+  }
+  .bottom-navigation {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2);
+    width: min(100%, var(--content-max));
+    min-height: var(--navigation-height);
+    margin-inline: auto;
+    padding: var(--space-2);
+    border: var(--stroke);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    user-select: none;
+  }
+  .navigation-capsule {
+    position: absolute;
+    top: var(--capsule-y, 8px);
+    left: 0;
+    width: var(--capsule-width, 0px);
+    height: var(--capsule-height, 0px);
+    border-radius: var(--radius-xl);
+    background: var(--fill-capsule);
+    box-shadow: var(--shadow-capsule);
+    transform: translate3d(var(--capsule-x, 0px), 0, 0);
+    transition: transform var(--duration-normal) var(--ease-standard);
+    visibility: hidden;
+    pointer-events: none;
+  }
+  [data-enhanced] .navigation-capsule { visibility: visible; }
+  [data-dragging] .navigation-capsule { transition: none; }
+  [data-enhanced] a[aria-current="page"] { background: transparent; box-shadow: none; }
+  .bottom-navigation[data-dragging] a { color: var(--color-text); }
+  .bottom-navigation[data-dragging] a[data-preview] { color: var(--color-on-primary); }
+  a {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    justify-self: center;
+    justify-items: center;
+    align-content: center;
+    gap: var(--space-1);
+    min-height: var(--touch-target);
+    width: min(100%, var(--navigation-item-max));
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-xl);
+    color: var(--color-text);
+    font: 500 clamp(14px, 3.5vw, 16px)/1.2 var(--font-ui);
+    text-decoration: none;
+    touch-action: pan-y pinch-zoom;
+  }
+  .navigation-icon {
+    display: block;
+    width: var(--icon-width);
+    height: var(--space-8);
+    background-color: currentColor;
+    -webkit-mask-image: var(--navigation-icon);
+    mask-image: var(--navigation-icon);
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    mask-mode: alpha;
+    pointer-events: none;
+  }
+  a[aria-current="page"] { background: var(--fill-capsule); box-shadow: var(--shadow-capsule); color: var(--color-on-primary); }
+  a:focus:not(:focus-visible) { outline: none; }
+  a:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+  @media (hover: hover) { .bottom-navigation:not([data-dragging]) a:not([aria-current]):hover { background: var(--color-surface-muted); } }
+</style>
