@@ -31,4 +31,3 @@ src/components/  telas e componentes   src/scripts/  API, upload, votos, XP, nav
 src/styles/      tokens e CSS global   src/assets/   fontes e imagens otimizadas
 public/          favicon e licenças    scripts/      otimização de assets
 ```
-Documentos de apoio: `design.markdown` (design), `ASSET_OPTIMIZATION.md`, `PROGRESSAO_XP.md`, `INTEGRATION_STATUS.md`.

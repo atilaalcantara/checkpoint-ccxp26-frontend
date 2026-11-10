@@ -13,3 +13,16 @@ PROMPT_BACKEND.md
 # Originais e cópias locais de artes ainda não reveladas.
 PersonagensENiveis/
 public/assets/characters/Nivel[2-9]*
+
+# Docs internos e originais brutos (mantidos só localmente)
+ASSET_OPTIMIZATION.md
+INTEGRATION_STATUS.md
+MOTION_PLAYGROUND.md
+PARTICIPACAO_MOCK.md
+PROGRESSAO_XP.md
+REQUISITOS_BACKEND.md
+VISUAL_REVIEW.md
+design.markdown
+background.png
+molduraFotoVazia.png
+prototipo3Paginas.png
