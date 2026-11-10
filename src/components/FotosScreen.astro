@@ -41,11 +41,21 @@ import RecentPhotos from './RecentPhotos.astro';
         <p id="photo-dialog-status" class="photo-preview-status" role="status" aria-live="polite">
           Prévia local. A foto será publicada após o envio.
         </p>
+        <label class="photo-consent">
+          <input type="checkbox" data-photo-consent />
+          <span>Concordo que minha foto seja publicada neste site e usada no álbum do projeto, e que tenho direito de uso da imagem das pessoas nela. <a href="/privacidade" target="_blank" rel="noopener">Aviso de privacidade</a></span>
+        </label>
         <button type="button" class="button-primary" data-photo-submit>Enviar foto</button>
         <button type="button" class="button-secondary" data-photo-clear>Escolher outra</button>
       </div>
     </dialog>
-    <div class="photo-complete" data-photo-complete hidden role="status"><strong>Uma foto foi salva!</strong><span>Obrigado por fazer parte da nossa aventura.</span></div>
+    <div class="photo-complete" data-photo-complete hidden role="status">
+      <img class="photo-complete-korok" src={assets.korok.avif} width={assets.korok.width} height={assets.korok.height} alt="" aria-hidden="true" decoding="async" />
+      <div class="photo-complete-bubble">
+        <span class="photo-complete-greeting">Foto enviada!</span>
+        <span class="photo-complete-text">Você já mandou a sua. +2 XP!</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -78,7 +88,7 @@ import RecentPhotos from './RecentPhotos.astro';
     text-align: center;
   }
 
-  .photo-actions .button-primary { width: min(100%, 400px); box-shadow: var(--shadow-card); }
+  .photo-actions .button-primary { width: min(100%, 400px); }
   .photo-actions .button-primary[hidden] { display:none; }
 
   .photo-dialog {
@@ -92,7 +102,7 @@ import RecentPhotos from './RecentPhotos.astro';
     border-radius: var(--radius-xl);
     background: var(--color-surface);
     color: var(--color-text);
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--shadow-lift);
   }
   .photo-dialog::backdrop { background: rgb(35 22 16 / 55%); }
   .photo-preview {
@@ -101,10 +111,22 @@ import RecentPhotos from './RecentPhotos.astro';
     gap: var(--space-3);
     text-align: center;
   }
+  .photo-consent { display:flex; gap:var(--space-2); align-items:flex-start; text-align:left; font-size:13px; line-height:1.4; }
+  .photo-consent input { flex:none; width:22px; height:22px; margin:0; }
   .photo-dialog-title { margin: 0; font: 700 22px/1.25 var(--font-ui); }
-  .photo-complete { display:grid; gap:var(--space-1); color:var(--color-text-secondary); font-size:14px; }
-  .photo-complete strong { color:var(--color-olive); font-size:19px; }
-  .photo-complete small { font-size:12px; font-weight:400; }
+  /* Same language as the Home: Korok beside a rounded cream bubble with a side tail. */
+  .photo-complete { display:grid; grid-template-columns:auto minmax(0, 1fr); align-items:end; gap:var(--space-3); width:min(100%, 380px); text-align:left; }
+  .photo-complete-korok { width:auto; height:clamp(64px, 10cqh, 88px); }
+  .photo-complete-bubble { position:relative; display:grid; gap:2px; padding:var(--space-3) var(--space-5); border:1px solid var(--color-border); border-radius:var(--radius-xl); background:var(--color-surface); box-shadow:var(--shadow-lift); }
+  .photo-complete-bubble::before { content:''; position:absolute; left:-8px; top:50%; width:16px; height:16px; border-left:1px solid var(--color-border); border-bottom:1px solid var(--color-border); background:var(--color-surface); transform:translateY(-50%) rotate(45deg); }
+  .photo-complete-greeting { color:var(--color-olive); font:italic 700 22px/1.1 var(--font-ui); }
+  .photo-complete-text { color:var(--color-text); font-size:15px; font-weight:500; line-height:1.35; }
+  @media (prefers-reduced-motion: no-preference) {
+    .photo-complete:not([hidden]) .photo-complete-korok { animation:korok-pop 520ms var(--ease-spring) both; }
+    .photo-complete:not([hidden]) .photo-complete-bubble { animation:complete-in 360ms var(--ease-standard) 160ms both; }
+  }
+  @keyframes korok-pop { from { opacity:0; transform:translateY(14px); } }
+  @keyframes complete-in { from { opacity:0; transform:translateX(-6px); } }
   .photo-complete[hidden] { display:none; }
 
   .photo-crop { position:relative; width:min(190px, 30dvh); aspect-ratio:420 / 462; overflow:hidden; touch-action:none; cursor:grab; }
@@ -129,5 +151,11 @@ import RecentPhotos from './RecentPhotos.astro';
     color: var(--color-text);
     font-weight: 600;
     font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 2px 0 rgb(59 33 22 / 12%);
+    transition: background var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
   }
+  .button-secondary:hover { background: var(--color-surface-muted); }
+  .button-secondary:active { transform: translateY(2px); box-shadow: none; }
+  .photo-preview .button-primary { width: 100%; }
 </style>

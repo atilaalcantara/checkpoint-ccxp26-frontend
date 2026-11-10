@@ -26,12 +26,45 @@
 #                              não economiza bytes relevantes e só gasta CPU
 #                              — por isso ficam de fora dos tipos compressíveis.
 
+# Redireciona todo HTTP para HTTPS.
+server {
+  listen 80;
+  server_name checkpoint.example.com;
+  return 301 https://$host$request_uri;
+}
+
+# Zona de rate limit por IP para a API (complementa o limite da própria API).
+limit_req_zone $binary_remote_addr zone=api:10m rate=30r/s;
+
 server {
   listen 443 ssl http2;
   server_name checkpoint.example.com; # TODO: domínio real.
 
   ssl_certificate     /etc/letsencrypt/live/checkpoint.example.com/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/checkpoint.example.com/privkey.pem;
+
+  # --- Segurança ---
+  # Ajuste connect-src se a API ficar em outro domínio (ex.: https://api.example.com).
+  # O PUBLIC_API_URL do build deve ser vazio (mesma origem) para usar o proxy /api abaixo.
+  add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" always;
+  add_header X-Content-Type-Options "nosniff" always;
+  add_header Referrer-Policy "no-referrer" always;
+  add_header Strict-Transport-Security "max-age=31536000" always;
+  add_header Permissions-Policy "camera=(self), geolocation=(), microphone=()" always;
+  server_tokens off;
+
+  # --- API (container .NET atrás do Nginx; TLS termina aqui) ---
+  location /api/ {
+    limit_req zone=api burst=60 nodelay;
+    client_max_body_size 11m;       # 10 MiB de foto + overhead multipart
+    proxy_pass http://127.0.0.1:8080;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $remote_addr;  # sobrescreve: a API confia neste cabeçalho
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 60s;
+    proxy_request_buffering on;
+  }
+  location /health/ { deny all; }   # health checks só internamente
 
   root /var/www/checkpoint-ccxp26/dist;
   index index.html;
@@ -56,7 +89,10 @@ server {
   # pipeline próprio em scripts/prepare-official-assets.mjs). Um novo
   # deploy com conteúdo diferente gera um nome de arquivo diferente, então
   # nenhum visitante fica preso a uma versão antiga em cache.
+  # ATENÇÃO: add_header em um location substitui os do nível server; por isso
+  # os locations abaixo repetem os cabeçalhos de segurança via include.
   location ~* ^/(_astro|assets)/ {
+    include /etc/nginx/snippets/checkpoint-security-headers.conf;
     add_header Cache-Control "public, max-age=31536000, immutable" always;
     try_files $uri =404;
   }
@@ -72,6 +108,7 @@ server {
 
   # --- 3. HTML: sempre revalidado, nunca cacheado "às cegas" ---
   location / {
+    include /etc/nginx/snippets/checkpoint-security-headers.conf;
     add_header Cache-Control "no-cache" always;
     try_files $uri $uri/ /index.html;
   }

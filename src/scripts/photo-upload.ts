@@ -12,6 +12,7 @@ const crop = document.querySelector<HTMLElement>('[data-photo-crop]');
 const cropHint = document.querySelector<HTMLElement>('[data-photo-crop-hint]');
 const clear = document.querySelector<HTMLButtonElement>('[data-photo-clear]');
 const submit = document.querySelector<HTMLButtonElement>('[data-photo-submit]');
+const consent = document.querySelector<HTMLInputElement>('[data-photo-consent]');
 const complete = document.querySelector<HTMLElement>('[data-photo-complete]');
 const status = document.querySelector<HTMLElement>('.photo-preview-status');
 const recent = document.querySelector<HTMLElement>('[data-recent-photos]');
@@ -37,7 +38,7 @@ async function refreshRecent() {
     recent.replaceChildren(fan);
   } catch { if (!recent.querySelector('.photo-fan')) recent.textContent = 'Não foi possível carregar as fotos recentes.'; }
 }
-if (trigger && input && preview && image && crop && cropHint && clear && submit && complete && status) {
+if (trigger && input && preview && image && crop && cropHint && clear && submit && consent && complete && status) {
   let url: string | null = null;
   let busy = false;
   let controller: AbortController | null = null;
@@ -90,6 +91,7 @@ if (trigger && input && preview && image && crop && cropHint && clear && submit 
     return new File([blob], type === 'image/png' ? 'foto.png' : 'foto.jpg', { type });
   }
   function reset() {
+    consent!.checked = false;
     if (url) URL.revokeObjectURL(url);
     url = null; input!.value = ''; image!.removeAttribute('src');
     if (preview!.open) preview!.close();
@@ -132,6 +134,7 @@ if (trigger && input && preview && image && crop && cropHint && clear && submit 
   });
   submit.addEventListener('click', async () => {
     const file = input.files?.[0]; if (!file || busy || Date.now() < retryAt) return;
+    if (!consent.checked) { status.textContent = 'Marque a caixa de concordância para enviar a foto.'; consent.focus(); return; }
     busy = true; cancelled = false; submit.disabled = true; clear.textContent = 'Cancelar';
     try {
       const upload = await croppedFile(file);

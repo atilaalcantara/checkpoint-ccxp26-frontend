@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const contact = import.meta.env.PUBLIC_PRIVACY_EMAIL ?? '';
+---
+
+<BaseLayout title="Privacidade — Checkpoint CCXP26" description="Como tratamos as fotos e os dados enviados no Checkpoint CCXP26.">
+  <main id="conteudo" class="privacy" tabindex="-1">
+    <a class="privacy-back" href="/">&larr; Voltar</a>
+    <h1>Aviso de privacidade</h1>
+    <p>Este é um projeto de um casal para interagir com quem visita a CCXP. Coletamos o mínimo necessário.</p>
+
+    <h2>O que coletamos</h2>
+    <ul>
+      <li><strong>Fotografia</strong>, apenas se você decidir enviar uma.</li>
+      <li><strong>Respostas das enquetes</strong>, de forma anônima.</li>
+      <li><strong>Um identificador aleatório</strong> guardado no seu navegador (localStorage), usado só para evitar votos e fotos repetidos. Não contém nome, e-mail, telefone nem localização, e não usamos cookies de rastreamento ou analytics.</li>
+    </ul>
+
+    <h2>Para que usamos</h2>
+    <p>As fotos servem para formar o álbum do projeto e, após o evento, podem ser usadas em material impresso do casal. As respostas servem para exibir os resultados das enquetes.</p>
+
+    <h2>Fotos podem aparecer publicamente</h2>
+    <p>Uma versão reduzida da sua foto pode ser exibida para qualquer visitante do site, logo após o envio. Não enviamos nem exibimos seu nome. Os metadados da imagem (como localização e data) são removidos da versão exibida publicamente.</p>
+
+    <h2>Base legal</h2>
+    <p>Tratamos a foto com base no seu <strong>consentimento</strong> (LGPD, art. 7º, I), dado ao marcar a caixa de concordância antes de enviar. Você pode pedir a remoção a qualquer momento.</p>
+
+    <h2>Fotos de outras pessoas</h2>
+    <p>Envie apenas fotos nas quais você tenha direito de uso da imagem. Se houver outras pessoas reconhecíveis, é sua responsabilidade ter a permissão delas. Não envie fotos de menores de idade sem autorização do responsável.</p>
+
+    <h2>Quanto tempo guardamos</h2>
+    <p>Mantemos as fotos até a conclusão do projeto do álbum, e depois as excluímos ou anonimizamos.</p>
+
+    <h2>Seus direitos e exclusão</h2>
+    <p>Você pode pedir acesso, correção ou exclusão da sua foto e dos seus dados. Para facilitar, informe o dia e o horário aproximado do envio ou anexe a foto. Respondemos em até 15 dias.</p>
+    {contact
+      ? <p>Contato: <a href={`mailto:${contact}`}>{contact}</a></p>
+      : <p>Contato: informe aqui o canal de contato do projeto.</p>}
+  </main>
+</BaseLayout>
+
+<style is:global>
+  .privacy { box-sizing: border-box; height: 100dvh; overflow-y: auto; padding: var(--space-6) var(--space-5) calc(var(--space-8, 48px) + env(safe-area-inset-bottom)); max-width: 640px; margin: 0 auto; line-height: 1.55; }
+  .privacy h1 { font-size: 28px; margin: var(--space-4) 0; }
+  .privacy h2 { font-size: 18px; margin: var(--space-5) 0 var(--space-2); }
+  .privacy a { color: var(--color-olive-deep, inherit); }
+  .privacy-back { display: inline-block; min-height: 44px; line-height: 44px; }
+</style>

@@ -114,7 +114,7 @@ import assets from '../assets/official-assets.json';
 
   .brand { width: min(86cqi, var(--logo-max-width)); margin-inline: auto; line-height: 1; }
   .brand-image { width: 100%; height: auto; }
-  .subtitle { margin-top: var(--space-3); color: var(--color-text); font-size: clamp(17px, 4.5cqi, 19px); font-weight: 500; line-height: 1.4; }
+  .subtitle { margin-top: var(--space-3); color: var(--color-text); text-wrap: balance; font-size: clamp(17px, 4.5cqi, 19px); font-weight: 500; line-height: 1.4; }
 
   .character-stage {
     --character-height: clamp(112px, 25.2cqh, 216px);
@@ -160,7 +160,7 @@ import assets from '../assets/official-assets.json';
     border: var(--bubble-border) solid var(--color-border);
     border-radius: var(--radius-xl);
     background: var(--color-surface);
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--shadow-lift);
   }
   .speech-bubble::before {
     content: '';
@@ -186,8 +186,8 @@ import assets from '../assets/official-assets.json';
     font-size: clamp(16px, 4.5cqi, 18px);
     line-height: 1.3;
   }
-  .greeting { color: var(--color-olive); font: italic 700 clamp(28px, 4.8cqh, 40px)/1.1 var(--font-ui); }
-  .scroll-hint { display: grid; align-self: end; justify-items: center; gap: var(--space-1); font-size: 14px; text-align: center; }
+  .greeting { color: var(--color-olive); font: italic 700 clamp(28px, 4.8cqh, 40px)/1.1 var(--font-ui); text-shadow: 0 2px 0 rgb(88 117 27 / 14%); }
+  .scroll-hint { display: grid; align-self: end; justify-items: center; gap: var(--space-1); color: var(--color-text-secondary); font-size: 14px; font-weight: 500; text-align: center; }
   .scroll-hint svg {
     color: var(--color-olive);
     /* Suggests the upward swipe that advances to the next screen. */
@@ -214,6 +214,8 @@ import assets from '../assets/official-assets.json';
     .mascot-message { padding-block: calc(var(--space-3) - var(--bubble-border)); font-size: 16px; }
     .scroll-hint svg { width: 24px; height: 24px; }
   }
+
+  @media (prefers-reduced-motion: reduce) { .scroll-hint svg { animation: none; } }
 
   @media (max-width: 319px) {
     .mascot-composition { grid-template-columns: minmax(0, 1fr); }

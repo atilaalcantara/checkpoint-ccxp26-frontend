@@ -8,6 +8,7 @@ const { title, text } = Astro.props;
   <div class="info-content">
     <strong>{title}</strong>
     <p>{text}</p>
+    <p><a href="/privacidade">Privacidade</a></p>
   </div>
 </details>
 
@@ -17,18 +18,23 @@ const { title, text } = Astro.props;
 
 <style is:global>
   .info-dialog { width: min(360px, calc(100vw - 40px)); max-height: calc(100dvh - 40px); padding: var(--space-6); border: var(--stroke); border-radius: var(--radius-xl); background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-card); }
-  .info-dialog::backdrop { background: rgb(59 33 22 / 24%); }
+  .info-dialog { box-shadow: var(--shadow-lift); }
+  .info-dialog::backdrop { background: rgb(59 33 22 / 34%); }
   .info-dialog[open] .info-content p { animation: info-content-in var(--duration-container) var(--ease-container) both; }
   @keyframes info-content-in { from { opacity: 0; } to { opacity: 1; } }
   .info-dialog > .info-content[class] { position: static; width: auto; padding: 0; border: 0; box-shadow: none; background: transparent; }
-  .info-close { min-height: 44px; margin-top: var(--space-5); padding: var(--space-2) var(--space-5); border: var(--stroke); border-radius: var(--radius-pill); background: var(--color-olive); color: var(--color-on-primary); }
+  .info-close { min-height: 44px; margin-top: var(--space-5); padding: var(--space-2) var(--space-6); border: 0; border-radius: var(--radius-pill); background: var(--color-olive); color: var(--color-on-primary); font-weight: 700; cursor: pointer; box-shadow: 0 3px 0 var(--color-olive-deep); transition: transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard); }
+  .info-close:active { transform: translateY(3px); box-shadow: 0 0 0 var(--color-olive-deep); }
+  .info-close:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
 </style>
 
 <style>
   .screen-info { position: absolute; top: calc(env(safe-area-inset-top) + 12px); right: max(16px, env(safe-area-inset-right)); z-index: 5; }
-  summary { display: grid; place-items: center; width: 44px; height: 44px; cursor: pointer; list-style: none; }
+  summary { display: grid; place-items: center; width: 44px; height: 44px; cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent; }
   summary::-webkit-details-marker { display: none; }
   summary span { display: grid; place-items: center; width: 30px; height: 30px; border: 2px solid var(--color-text); border-radius: 9px; font: 700 20px/1 Georgia, serif; }
+  summary:focus-visible { outline: none; }
+  summary:focus-visible span { outline: 3px solid var(--color-focus); outline-offset: 3px; }
   .info-content { position: absolute; right: 0; top: 48px; width: min(280px, calc(100vw - 40px)); padding: var(--space-4); background: var(--color-surface); border: var(--stroke); border-radius: var(--radius-md); box-shadow: var(--shadow-card); color: var(--color-text); }
   .info-content p { margin-top: var(--space-1); font-size: 14px; line-height: 1.5; }
 </style>

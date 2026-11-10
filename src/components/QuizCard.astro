@@ -46,6 +46,7 @@ const { staticPreview = false } = Astro.props;
 
   .quiz-prompt {
     margin: 0;
+    text-wrap: balance;
     max-width: 26ch;
     text-align: center;
     font: 700 clamp(22px, 6.5cqi, 28px)/1.25 var(--font-ui);
@@ -66,15 +67,23 @@ const { staticPreview = false } = Astro.props;
     justify-items: center;
     gap: var(--space-2);
     padding: var(--space-5) var(--space-3);
+    min-height: 104px;
+    align-content: center;
     border: 1px solid transparent;
     border-radius: var(--radius-lg);
-    font: 600 16px/1.2 var(--font-ui);
+    font: 700 16px/1.2 var(--font-ui);
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    box-shadow: 0 3px 0 rgb(59 33 22 / 14%), 0 6px 12px rgb(59 33 22 / 8%), inset 0 1px 0 rgb(255 255 255 / 50%);
     transition: transform var(--duration-fast) var(--ease-standard),
-                background var(--duration-fast) var(--ease-standard);
+                background var(--duration-fast) var(--ease-standard),
+                box-shadow var(--duration-fast) var(--ease-standard);
   }
-  .quiz-option:active { transform: scale(0.985); }
-  .quiz-option[data-selected] { transform: scale(.97); box-shadow: inset 0 0 0 2px currentColor; }
+  .quiz-option:active { transform: translateY(3px); box-shadow: 0 0 0 rgb(0 0 0 / 0%), inset 0 1px 0 rgb(255 255 255 / 20%); }
+  .quiz-option[data-selected] { transform: translateY(3px) scale(.98); box-shadow: inset 0 0 0 2px currentColor; }
+  .quiz-option-icon { width: 28px; height: 28px; transition: transform var(--duration-normal) var(--ease-spring); }
+  @media (hover: hover) { .quiz-option:hover .quiz-option-icon { transform: translateY(-2px) scale(1.08); } }
   .quiz-option-icon { pointer-events: none; }
 
   /* Tones derive strictly from existing design tokens (tokens.css), via
@@ -85,6 +94,7 @@ const { staticPreview = false } = Astro.props;
   .quiz-option--lavender { background: var(--color-lavender); color: var(--color-text); }
   .quiz-option--amber { background: color-mix(in srgb, var(--color-amber) 24%, var(--color-surface)); color: var(--color-text); }
   .quiz-option--cream { background: var(--color-surface-muted); color: var(--color-text); border-color: var(--color-border); }
+  .quiz-option--olive[data-selected] { box-shadow: inset 0 0 0 2px rgb(255 255 255 / 80%); }
 
   @media (hover: hover) {
     .quiz-option--olive:hover { background: var(--color-olive-hover); }
@@ -115,6 +125,7 @@ const { staticPreview = false } = Astro.props;
   .quiz-confirmed { color:var(--color-olive); font-size:14px; font-weight:700; }
   .quiz-error { color:var(--color-danger); font-size:14px; text-align:center; }
   .quiz-option:disabled { cursor:default; opacity:1; }
+  .quiz-option:disabled:not([data-selected]) { opacity:.72; }
   .quiz-continue { min-width:200px; margin-top:var(--space-2); }
   .results-list { display:grid; gap:var(--space-2); width:100%; min-width:0; text-align:left; }
   .results-intro { margin-bottom:8px; }
@@ -126,21 +137,21 @@ const { staticPreview = false } = Astro.props;
   .results-scroller:focus-visible { outline:3px solid var(--color-focus); outline-offset:-3px; }
   .results-grid { display:grid; width:100%; grid-auto-columns:calc((100% - var(--space-3)) / 2); grid-template-rows:repeat(2,auto); gap:var(--space-3); }
   .result-card--page-start { scroll-snap-align:start; scroll-snap-stop:always; }
-  .result-card { position:relative; container-type:inline-size; display:flex; flex-direction:column; min-width:0; padding:10px; border:var(--stroke); border-radius:var(--radius-xl); background:var(--color-surface); }
+  .result-card { position:relative; container-type:inline-size; display:flex; flex-direction:column; min-width:0; padding:14px 14px 12px; border:var(--stroke); border-radius:var(--radius-xl); background:var(--color-surface); }
   .result-ghost { position:absolute; z-index:1; pointer-events:none; }
-  .result-question { min-height:2.6em; margin:0 0 8px; font-size:15px; line-height:1.3; overflow-wrap:anywhere; }
+  .result-question { min-height:2.6em; margin:0 0 12px; padding-inline:2px; font-size:15px; line-height:1.3; text-wrap:balance; overflow-wrap:anywhere; }
   .result-options { display:grid; grid-auto-rows:1fr; gap:6px; }
   .result-option { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:6px; align-items:center; min-height:42px; padding:6px 8px; border-radius:var(--radius-sm); background:var(--color-surface-muted); color:var(--color-text); }
-  .result-option--winner { background:var(--color-olive); color:var(--color-on-primary); }
+  .result-option--winner { background:var(--fill-button); color:var(--color-on-primary); box-shadow:inset 0 1px 0 rgb(255 255 255 / 20%); font-weight:700; }
   .result-label { min-width:0; overflow-wrap:anywhere; font-size:12px; font-weight:600; }
-  .result-percent { font-size:14px; }
+  .result-percent { font-size:14px; font-weight:700; font-variant-numeric:tabular-nums; }
   .result-total { margin:auto 0 0; padding-top:var(--space-2); text-align:right; color:var(--color-text-secondary); font-size:12px; }
   .results-swipe-hint { margin:10px 0 0; text-align:center; color:var(--color-olive); font-size:20px; font-weight:600; line-height:1; }
-  .results-simulate { display:block; margin:var(--space-1) auto 0; padding:4px 8px; border:0; background:transparent; color:var(--color-olive); font:600 12px/1.3 var(--font-ui); cursor:pointer; }
+  .results-simulate { display:block; margin:var(--space-1) auto 0; padding:4px 8px; border:0; background:transparent; color:var(--color-olive); font:600 12px/1.3 var(--font-ui); cursor:pointer; min-height:44px; text-decoration:underline; text-underline-offset:3px; }
   .results-simulate:focus-visible { outline:3px solid var(--color-focus); outline-offset:2px; }
   @media (max-height:850px), (max-width:360px) {
-    .result-card { padding:10px; }
-    .result-question { margin-bottom:6px; line-height:1.2; }
+    .result-card { padding:12px 12px 10px; }
+    .result-question { margin-bottom:8px; line-height:1.25; }
     .result-option { padding:6px 8px; line-height:1.2; }
     .result-label { font-size:12px; }
     .result-percent { font-size:13px; }
@@ -151,7 +162,7 @@ const { staticPreview = false } = Astro.props;
   }
   @media (max-height:600px) {
     .results-list .results-intro { margin-bottom:5px; }
-    .results-list .result-card { padding:7px; }
+    .results-list .result-card { padding:9px 9px 8px; }
     .results-list .result-option { min-height:35px; padding:4px 8px; }
     .results-list .result-options { gap:4px; }
     .results-list .results-grid { gap:8px; grid-auto-columns:calc((100% - 8px) / 2); }

@@ -29,11 +29,15 @@ body {
   color: var(--color-text);
   font: 400 16px/1.5 var(--font-ui);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   overflow-wrap: break-word;
   overflow: hidden;
 }
 
 h1, h2, p { margin: 0; }
+h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+::selection { background: var(--color-olive-soft); color: var(--color-text); }
 img, svg { display: block; max-width: 100%; }
 img { height: auto; }
 /* The <picture> wrapper is otherwise an unstyled inline box; `contents`
@@ -66,6 +70,8 @@ button { cursor: pointer; }
   margin-bottom: var(--space-3);
   font: 400 clamp(44px, 12vw, 56px)/1.05 var(--font-display);
   text-align: center;
+  letter-spacing: .01em;
+  text-shadow: 0 2px 0 rgb(255 255 255 / 70%), 0 3px 0 rgb(217 196 182 / 55%);
 }
 
 .section-lead {
@@ -76,6 +82,7 @@ button { cursor: pointer; }
   font-size: clamp(17px, 4.5cqi, 19px);
   font-weight: 500;
   line-height: 1.4;
+  color: var(--color-text-secondary);
 }
 
 .button-primary {
@@ -88,25 +95,32 @@ button { cursor: pointer; }
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
   background: var(--fill-button);
-  box-shadow: 0 3px 7px rgb(59 33 22 / 12%), inset 0 1px 0 rgb(255 255 255 / 14%);
+  box-shadow: var(--shadow-key);
   color: var(--color-on-primary);
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: .01em;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   line-height: 1.2;
   text-align: center;
   text-decoration: none;
-  transition: background var(--duration-fast) var(--ease-standard);
+  transition: background var(--duration-fast) var(--ease-standard),
+              transform var(--duration-fast) var(--ease-standard),
+              box-shadow var(--duration-fast) var(--ease-standard);
 }
 
 .button-primary:disabled {
   cursor: not-allowed;
   opacity: 0.65;
+  transform: none;
+  box-shadow: var(--shadow-key-pressed);
 }
 
 @media (hover: hover) {
-  .button-primary:hover { background: var(--color-olive-hover); }
+  .button-primary:hover { background: var(--color-olive-hover); transform: translateY(-1px); }
 }
 
-.button-primary:active { background: var(--color-olive-hover); }
+.button-primary:active { background: var(--color-olive-hover); transform: translateY(3px); box-shadow: var(--shadow-key-pressed); }
 
 .visually-hidden {
   position: absolute;

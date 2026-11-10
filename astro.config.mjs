@@ -4,6 +4,8 @@ import { readdir, rm } from 'node:fs/promises';
 export default defineConfig({
   output: 'static',
   devToolbar: { enabled: false },
+  // Never inline scripts: lets the production CSP use script-src 'self' without per-build hashes.
+  vite: { build: { assetsInlineLimit: 0 } },
   integrations: [{
     name: 'exclude-unreleased-character-art',
     hooks: {
