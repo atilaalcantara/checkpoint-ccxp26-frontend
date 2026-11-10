@@ -1,0 +1,16 @@
+node_modules
+dist
+.astro
+.git
+.github
+.env
+.env.*
+.playwright-mcp
+.DS_Store
+source-assets
+PersonagensENiveis
+*.png
+!src/**/*.png
+*.md
+*.markdown
+nginx*.example
