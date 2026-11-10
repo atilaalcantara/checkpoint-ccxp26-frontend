@@ -1,36 +1,74 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import HomeHero from '../components/HomeHero.astro';
-import ExperienceProgress from '../components/ExperienceProgress.astro';
-import ScreenStack from '../components/ScreenStack.astro';
-import FotosScreen from '../components/FotosScreen.astro';
-import EnqueteScreen from '../components/EnqueteScreen.astro';
-import ScreenInfo from '../components/ScreenInfo.astro';
-
 ---
 
 <BaseLayout
-  title="Checkpoint CCXP26 — Nosso diário de aventuras"
-  description="Você encontrou o Checkpoint CCXP26! Nosso diário de aventuras na CCXP."
+  title="Checkpoint CCXP26 — Em breve"
+  description="Quase lá! O Checkpoint CCXP26 será liberado no dia da CCXP26."
 >
-  <ScreenStack>
-    <section id="inicio" class="experience-screen" aria-labelledby="home-title">
-      <div class="screen-scroll" data-screen-scroll tabindex="0" role="region" aria-label="Conteúdo de Início">
-        <ScreenInfo title="Início" text="Somos um casal que adora viver a CCXP juntos! Criei este cantinho para a gente interagir com vocês, resolver nossas brincadeiras de casal e construir um álbum das nossas aventuras por aqui." />
-        <HomeHero><ExperienceProgress slot="progress" /></HomeHero>
+  <main id="conteudo" class="soon">
+    <img class="logo" src="/assets/branding/checkpoint-ccxp26-logo.c062877445.avif" alt="Checkpoint CCXP26" width="360" height="200" />
+    <div class="mascot-composition">
+      <img class="mascot" src="/assets/mascot/korok.70b8e471a5.avif" alt="Korok em pixel art" width="120" height="120" />
+      <div class="speech-bubble">
+        <p><span class="greeting">Yahaha!</span> Estamos quase lá!</p>
+        <p>O site será liberado só na <strong>CCXP26</strong>. Volte no grande dia!</p>
       </div>
-    </section>
-    <section id="enquete" class="experience-screen" aria-labelledby="poll-title">
-      <div class="screen-scroll" data-screen-scroll tabindex="0" role="region" aria-label="Conteúdo de Enquete">
-        <ScreenInfo title="Enquete" text="Sabe aquelas discussões de brincadeira que todo casal tem? A gente trouxe algumas das nossas para você ajudar a colocar um ponto final nelas. Escolha seu lado!" />
-        <EnqueteScreen />
-      </div>
-    </section>
-    <section id="fotos" class="experience-screen" aria-labelledby="photos-title">
-      <div class="screen-scroll" data-screen-scroll tabindex="0" role="region" aria-label="Conteúdo de Fotos">
-        <ScreenInfo title="Fotos" text="Flagrou a gente pela CCXP? Mande sua foto para fazer parte da nossa aventura! Aqui aparecem as mais recentes, mas todas serão recebidas com muito carinho para formar o nosso álbum depois." />
-        <FotosScreen />
-      </div>
-    </section>
-  </ScreenStack>
+    </div>
+  </main>
 </BaseLayout>
+
+<style>
+  .soon {
+    min-height: 100dvh;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: var(--space-8);
+    padding: var(--space-8) var(--content-gutter);
+    background: var(--color-bg);
+    color: var(--color-text);
+    text-align: center;
+  }
+  .logo { width: min(100%, var(--logo-max-width)); height: auto; }
+  .mascot-composition {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: var(--space-5);
+    width: min(100%, var(--content-max));
+  }
+  .mascot { width: 96px; height: auto; image-rendering: pixelated; }
+  .speech-bubble {
+    position: relative;
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    border: var(--stroke);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-lift);
+    font-family: var(--font-ui);
+    line-height: 1.4;
+  }
+  .speech-bubble::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--space-2));
+    top: 50%;
+    width: var(--space-4);
+    height: var(--space-4);
+    border-left: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+    transform: translateY(-50%) rotate(45deg);
+  }
+  .speech-bubble p { position: relative; margin: 0; }
+  .greeting {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--color-olive);
+  }
+  strong { color: var(--color-olive-deep); }
+</style>

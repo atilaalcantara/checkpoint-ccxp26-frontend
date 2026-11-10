@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HomeHero from '../components/HomeHero.astro';
+import ExperienceProgress from '../components/ExperienceProgress.astro';
+import ScreenStack from '../components/ScreenStack.astro';
+import FotosScreen from '../components/FotosScreen.astro';
+import EnqueteScreen from '../components/EnqueteScreen.astro';
+import ScreenInfo from '../components/ScreenInfo.astro';
+
+---
+
+<BaseLayout
+  title="Checkpoint CCXP26 — Nosso diário de aventuras"
+  description="Você encontrou o Checkpoint CCXP26! Nosso diário de aventuras na CCXP."
+>
+  <ScreenStack>
+    <section id="inicio" class="experience-screen" aria-labelledby="home-title">
+      <div class="screen-scroll" data-screen-scroll tabindex="0" role="region" aria-label="Conteúdo de Início">
+        <ScreenInfo title="Início" text="Somos um casal que adora viver a CCXP juntos! Criei este cantinho para a gente interagir com vocês, resolver nossas brincadeiras de casal e construir um álbum das nossas aventuras por aqui." />
+        <HomeHero><ExperienceProgress slot="progress" /></HomeHero>
+      </div>
+    </section>
+    <section id="enquete" class="experience-screen" aria-labelledby="poll-title">
+      <div class="screen-scroll" data-screen-scroll tabindex="0" role="region" aria-label="Conteúdo de Enquete">
+        <ScreenInfo title="Enquete" text="Sabe aquelas discussões de brincadeira que todo casal tem? A gente trouxe algumas das nossas para você ajudar a colocar um ponto final nelas. Escolha seu lado!" />
+        <EnqueteScreen />
+      </div>
+    </section>
+    <section id="fotos" class="experience-screen" aria-labelledby="photos-title">
+      <div class="screen-scroll" data-screen-scroll tabindex="0" role="region" aria-label="Conteúdo de Fotos">
+        <ScreenInfo title="Fotos" text="Flagrou a gente pela CCXP? Mande sua foto para fazer parte da nossa aventura! Aqui aparecem as mais recentes, mas todas serão recebidas com muito carinho para formar o nosso álbum depois." />
+        <FotosScreen />
+      </div>
+    </section>
+  </ScreenStack>
+</BaseLayout>
