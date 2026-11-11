@@ -5,7 +5,10 @@ import { showConfirmedXP } from './community-xp';
 import { openPhotoViewer, type ViewerPhoto } from './photo-viewer';
 
 const trigger = document.querySelector<HTMLButtonElement>('[data-photo-trigger]');
+const gallery = document.querySelector<HTMLButtonElement>('[data-photo-gallery]');
+const choices = document.querySelector<HTMLElement>('[data-photo-choices]');
 const input = document.querySelector<HTMLInputElement>('[data-photo-input]');
+const camera = document.querySelector<HTMLInputElement>('[data-photo-camera]');
 const preview = document.querySelector<HTMLDialogElement>('[data-photo-preview]');
 const image = document.querySelector<HTMLImageElement>('[data-photo-preview-image]');
 const crop = document.querySelector<HTMLElement>('[data-photo-crop]');
@@ -20,9 +23,10 @@ const photoReward = document.querySelector<HTMLElement>('#fotos [data-section-re
 
 async function refreshRecent() {
   if (!recent) return;
+  const showMessage = (message: string) => { const text = document.createElement('p'); text.className = 'photo-empty'; text.textContent = message; recent.replaceChildren(text); };
   try {
     const { photos } = await api.recentPhotos();
-    if (!photos.length) { recent.textContent = 'Em breve, os primeiros flagras da CCXP aparecem aqui.'; return; }
+    if (!photos.length) { showMessage('Em breve, os primeiros flagras da CCXP aparecem aqui.'); return; }
     const fan = document.createElement('div'); fan.className = 'photo-fan'; fan.setAttribute('role', 'group'); fan.setAttribute('aria-label', 'Fotos recentes enviadas por visitantes');
     const valid = photos.slice(0, 3).filter(photo => photo.image.mediaType === 'image/avif' && /^[A-Za-z0-9+/]*={0,2}$/.test(photo.image.base64));
     const viewerPhotos: ViewerPhoto[] = valid.map(photo => ({ src: `data:image/avif;base64,${photo.image.base64}`, alt: photo.alt }));
@@ -36,10 +40,12 @@ async function refreshRecent() {
       frame.append(picture, overlay); action.append(frame); item.append(action); fan.append(item);
     });
     recent.replaceChildren(fan);
-  } catch { if (!recent.querySelector('.photo-fan')) recent.textContent = 'Não foi possível carregar as fotos recentes.'; }
+  } catch { if (!recent.querySelector('.photo-fan')) showMessage('Não foi possível carregar as fotos recentes.'); }
 }
-if (trigger && input && preview && image && crop && cropHint && clear && submit && consent && complete && status) {
+if (trigger && gallery && choices && input && camera && preview && image && crop && cropHint && clear && submit && consent && complete && status) {
   let url: string | null = null;
+  let selectedFile: File | null = null;
+  let lastTrigger: HTMLButtonElement = trigger;
   let busy = false;
   let controller: AbortController | null = null;
   let cancelled = false;
@@ -106,12 +112,12 @@ if (trigger && input && preview && image && crop && cropHint && clear && submit 
   function reset() {
     consent!.checked = false;
     if (url) URL.revokeObjectURL(url);
-    url = null; input!.value = ''; image!.removeAttribute('src');
+    url = null; selectedFile = null; input!.value = ''; camera!.value = ''; image!.removeAttribute('src');
     if (preview!.open) preview!.close();
   }
   function update() {
     const done = getParticipation()?.photoStatus === 'submitted';
-    trigger!.hidden = done; complete!.hidden = !done;
+    choices!.hidden = done; complete!.hidden = !done;
     if (photoReward) photoReward.hidden = done;
     if (done) reset();
   }
@@ -125,9 +131,11 @@ if (trigger && input && preview && image && crop && cropHint && clear && submit 
     }
     return false;
   }
-  trigger.addEventListener('click', () => input.click());
-  input.addEventListener('change', () => {
-    const file = input.files?.[0]; if (!file) return;
+  trigger.addEventListener('click', () => { lastTrigger = trigger; camera.click(); });
+  gallery.addEventListener('click', () => { lastTrigger = gallery; input.click(); });
+  const selectFile = (source: HTMLInputElement) => {
+    const file = source.files?.[0]; if (!file) return;
+    selectedFile = file;
     if (url) URL.revokeObjectURL(url);
     x = y = .5; adjusted = false; position(); crop.hidden = false; cropHint.hidden = false;
     url = URL.createObjectURL(file); image.src = url;
@@ -136,17 +144,19 @@ if (trigger && input && preview && image && crop && cropHint && clear && submit 
     if (!preview.open) preview.showModal();
     submit.disabled = Date.now() < retryAt;
     submit.focus({ preventScroll: true });
-  });
+  };
+  input.addEventListener('change', () => selectFile(input));
+  camera.addEventListener('change', () => selectFile(camera));
   clear.addEventListener('click', () => {
     if (busy) { cancelled = true; controller?.abort(); cancelWait?.(); status.textContent = 'Cancelando; verificando se uma foto foi salva…'; }
-    else { reset(); trigger.focus({ preventScroll: true }); }
+    else { reset(); lastTrigger.focus({ preventScroll: true }); }
   });
   preview.addEventListener('cancel', event => {
     event.preventDefault();
     clear.click();
   });
   submit.addEventListener('click', async () => {
-    const file = input.files?.[0]; if (!file || busy || Date.now() < retryAt) return;
+    const file = selectedFile; if (!file || busy || Date.now() < retryAt) return;
     if (!consent.checked) { status.textContent = 'Marque a caixa de concordância para enviar a foto.'; consent.focus(); return; }
     busy = true; cancelled = false; submit.disabled = true; clear.textContent = 'Cancelar';
     try {

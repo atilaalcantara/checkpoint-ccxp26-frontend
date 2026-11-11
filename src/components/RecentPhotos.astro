@@ -91,10 +91,17 @@ const [left, center, right] = photos.length === 3 ? photos : [];
   }
 
   .photo-empty {
-    margin: 0;
-    padding: var(--space-8) 0;
+    width: min(100%, 320px);
+    margin: 0 auto;
+    padding: var(--space-6);
+    border: var(--stroke);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
     text-align: center;
     color: var(--color-text-secondary);
+    font-size: 15px;
+    line-height: 1.5;
+    text-wrap: pretty;
   }
   .recent-photos .polaroid { position:relative; width:100%; aspect-ratio:420 / 462; overflow:hidden; border-radius:4%; }
   .recent-photos .polaroid-photo { position:absolute; inset:9.5% 8% 20.5%; width:auto; height:auto; object-fit:cover; border-radius:2%; }

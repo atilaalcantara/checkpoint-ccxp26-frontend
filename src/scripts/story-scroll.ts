@@ -17,7 +17,10 @@ function updateGuideState(): void {
   if (!story) return;
   const participation = getParticipation();
   story.toggleAttribute('data-poll-complete', participation?.resultsUnlocked === true);
+  story.toggleAttribute('data-poll-waiting', participation?.status === 'waiting_for_polls' && !participation.polls.some(poll => !poll.answerOptionId));
   story.toggleAttribute('data-photo-submitted', participation?.photoStatus === 'submitted');
+  const guideText = document.querySelector<HTMLElement>('[data-guide-text]');
+  if (guideText && story.dataset.phase === '1') guideText.textContent = story.hasAttribute('data-poll-waiting') ? 'Em breve tem mais enquetes!' : 'Toque no seu lado: +1 XP!';
 }
 subscribeParticipation(updateGuideState);
 updateGuideState();
@@ -84,7 +87,7 @@ if (story && track && stage && !reduce.matches) {
     currentPhase = i;
     story!.dataset.phase = String(i);
     dockLinks.forEach((a, n) => n === i ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
-    if (guideText) guideText.textContent = lines[i] ?? lines[0];
+    if (guideText) guideText.textContent = i === 1 && story!.hasAttribute('data-poll-waiting') ? 'Em breve tem mais enquetes!' : lines[i] ?? lines[0];
     if (first) return;
     // Korok dá um pulinho (anticipation + follow-through) e fala a frase da fase.
     guideKorok?.animate([
@@ -160,6 +163,7 @@ if (story && track && stage && !reduce.matches) {
   let touching = false;
   let programmatic = false;
   let settleTimer = 0;
+  let snapGeneration = 0;
   let direction = 1;
   const stops = (): number[][] => {
     const vh = innerHeight;
@@ -179,22 +183,27 @@ if (story && track && stage && !reduce.matches) {
     const gap = stops().find(([a, b]) => y > a + 2 && y < b - 2);
     if (!gap) return;
     const [a, b] = gap;
-    // Qualquer gesto claro (> 40px) avança na direção; um toque mínimo volta.
-    const target = direction > 0 ? (y - a > 24 ? b : a) : (b - y > 24 ? a : b);
+    // Uma intenção clara avança em ambos os sentidos, sem exigir meia tela.
+    // Toques mínimos retornam à parada de origem; trechos longos não ficam presos.
+    const threshold = Math.min(120, (b - a) * 0.22);
+    const target = direction > 0 ? (y - a >= threshold ? b : a) : (b - y >= threshold ? a : b);
     programmatic = true;
+    const generation = ++snapGeneration;
     scrollTo({ top: target, behavior: 'smooth' });
-    // Se o usuário interromper o movimento (o navegador cancela o smooth), reavalia depois de liberar.
-    const release = (): void => { programmatic = false; clearTimeout(settleTimer); settleTimer = window.setTimeout(settle, 140); };
+    const release = (): void => { if (generation === snapGeneration) programmatic = false; };
     let lastSeen = -1, still = 0;
     const watch = (): void => {
+      if (generation !== snapGeneration) return;
       if (scrollY === lastSeen) { if (++still > 4) return release(); } else { still = 0; lastSeen = scrollY; }
       requestAnimationFrame(watch);
     };
     requestAnimationFrame(watch);
   };
-  addEventListener('touchstart', () => { touching = true; programmatic = false; clearTimeout(settleTimer); }, { passive: true });
+  const interruptSnap = (): void => { snapGeneration++; programmatic = false; clearTimeout(settleTimer); };
+  addEventListener('touchstart', () => { touching = true; interruptSnap(); }, { passive: true });
+  addEventListener('wheel', () => { if (programmatic) interruptSnap(); }, { passive: true });
   addEventListener('touchend', () => { touching = false; settleTimer = window.setTimeout(settle, 160); }, { passive: true });
-  addEventListener('touchcancel', () => { touching = false; }, { passive: true });
+  addEventListener('touchcancel', () => { touching = false; clearTimeout(settleTimer); settleTimer = window.setTimeout(settle, 170); }, { passive: true });
   addEventListener('scroll', () => {
     const d = scrollY - lastScrollY;
     lastScrollY = scrollY;

@@ -26,7 +26,9 @@ function button(text: string, action: () => void, cls = 'button-primary quiz-con
 }
 function error(message: string) {
   if (!stage) return;
-  stage.replaceChildren(el('p', 'quiz-error', message), button('Tentar novamente', () => void load()));
+  const feedback = el('div', 'quiz-feedback');
+  feedback.append(el('p', 'quiz-error', message), button('Tentar novamente', () => void load()));
+  stage.replaceChildren(feedback);
   announce(message);
 }
 async function load() {
@@ -72,7 +74,9 @@ function render() {
   let poll = state.polls.find(item => item.id === currentId);
   if (!poll || poll.answerOptionId) poll = state.polls.find(item => !item.answerOptionId);
   if (!poll) {
-    stage.replaceChildren(el('p', 'quiz-complete-text', 'Não há enquetes suficientes disponíveis agora. Volte mais tarde!'), button('Atualizar', () => void load()));
+    const feedback = el('div', 'quiz-feedback');
+    feedback.append(el('p', 'quiz-complete-text', 'Não há enquetes suficientes disponíveis agora. Volte mais tarde!'), button('Atualizar', () => void load()));
+    stage.replaceChildren(feedback);
     return;
   }
   currentId = poll.id;

@@ -21,13 +21,17 @@ import RecentPhotos from './RecentPhotos.astro';
   </div>
 
   <div class="photo-actions">
+    <div class="photo-choices" data-photo-choices>
     <button type="button" class="button-primary" data-photo-trigger>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         <circle cx="12" cy="13" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
-      Tirar ou enviar uma foto
+      Tirar foto
     </button>
+    <button type="button" class="button-secondary photo-gallery" data-photo-gallery>Escolher da galeria</button>
+    </div>
+    <input type="file" accept="image/*" capture="environment" class="visually-hidden" data-photo-camera aria-label="Tirar uma fotografia" />
     <input type="file" accept="image/*" id="photo-input" class="visually-hidden" data-photo-input aria-label="Selecionar fotografia" />
 
     <dialog class="photo-dialog" data-photo-preview aria-labelledby="photo-dialog-title" aria-describedby="photo-dialog-status">
@@ -90,6 +94,9 @@ import RecentPhotos from './RecentPhotos.astro';
 
   .photo-actions .button-primary { width: min(100%, 400px); }
   .photo-actions .button-primary[hidden] { display:none; }
+  .photo-choices { display:grid; grid-template-columns:1fr 1fr; gap:var(--space-2); width:min(100%, 400px); }
+  .photo-choices[hidden] { display:none; }
+  .photo-choices .button-primary, .photo-choices .photo-gallery { width:100%; min-width:0; padding-inline:var(--space-2); font-size:14px; }
 
   .photo-dialog {
     box-sizing: border-box;
