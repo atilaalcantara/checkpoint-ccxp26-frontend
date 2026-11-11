@@ -1,0 +1,38 @@
+.site-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: var(--color-bg);
+  color: var(--color-text);
+  text-align: center;
+}
+.site-gate[hidden], .site-gate [hidden] { display: none; }
+.site-gate__page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  padding: max(30px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+}
+.site-gate__logo { width: 150px; height: auto; }
+.site-gate__announcement { display: flex; flex: 1; width: 100%; max-width: 390px; align-items: center; justify-content: center; }
+.site-gate__screen { display: flex; width: 100%; flex-direction: column; align-items: center; padding: 26px 0; }
+.site-gate__art { position: relative; display: grid; place-items: center; width: min(65vw, 254px); aspect-ratio: 1; margin-bottom: 40px; border-radius: 50%; background: #f3eacb; }
+.site-gate__screen--paused .site-gate__art { background: #f7e9d9; }
+.site-gate__screen--ended .site-gate__art { background: #f4e5ea; }
+.site-gate__art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; animation: gate-arrive 400ms var(--ease-standard) both; }
+.site-gate__eyebrow { margin-bottom: 18px; color: #55711a; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.site-gate__screen--paused .site-gate__eyebrow { color: #895023; }
+.site-gate__screen--ended .site-gate__eyebrow { color: #805063; }
+.site-gate h1 { max-width: 340px; font-size: clamp(25px, 7.4vw, 29px); line-height: 1.2; font-weight: 700; text-wrap: balance; }
+.site-gate__message, .site-gate__loading p { max-width: 314px; margin-top: 26px; color: var(--color-text-secondary); font-size: 15px; line-height: 1.55; }
+.site-gate__badge { display: grid; place-items: center; min-height: 43px; width: min(100%, 272px); margin-top: 48px; padding: 10px; border-radius: 8px; background: #f1ebd9; color: #4b6419; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.site-gate__screen--ended .site-gate__badge { background: #f4e8e3; color: #764654; }
+.site-gate__retry { width: min(100%, 310px); margin-top: 48px; }
+.site-gate__loading { width: 100%; }
+.site-gate__loading p { margin-inline: auto; }
+.site-gate__footer { color: #80685a; font-size: 9px; letter-spacing: .04em; text-transform: uppercase; }
+@keyframes gate-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .site-gate__art img { animation: none; } .site-gate__retry { transition: none; } }

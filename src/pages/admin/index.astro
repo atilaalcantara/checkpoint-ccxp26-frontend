@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import assets from '../../assets/official-assets.json';
+import '../../styles/admin.css';
+---
+<BaseLayout title="Admin — Checkpoint CCXP26" description="Demonstração do painel administrativo">
+  <main id="conteudo" class="admin" data-admin data-logo={assets.logo.avif} data-korok={assets.korok.avif} data-poll={assets.enqueteIcon.avif} data-camera={assets.cameraFotos.avif} data-nav-poll={assets.poll.src} data-nav-camera={assets.camera.src}>
+    <noscript>Ative o JavaScript para usar a demonstração do painel.</noscript>
+    <section class="login" data-login>
+      <img class="login-logo pixel" src={assets.logo.avif} alt="Checkpoint CCXP26" />
+      <div class="login-card">
+        <img class="login-korok pixel" src={assets.korok.avif} alt="" />
+        <p class="eyebrow">PAINEL ADMINISTRATIVO</p>
+        <h1>Acesso ao painel</h1>
+        <p>Use a passkey já cadastrada para acessar o painel.</p>
+        <p class="hint">Confirme sua identidade no dispositivo.</p>
+        <button class="primary login-button" type="button" data-action="login">Entrar com passkey</button>
+        {import.meta.env.DEV && <button class="secondary login-button" type="button" data-action="dev-login">Entrar no ambiente local</button>}
+        <p class="form-status" role="status" data-login-status></p>
+        <small>Acesso restrito · Somente passkey cadastrada</small>
+      </div>
+    </section>
+
+    <section class="workspace" data-workspace hidden>
+      <header class="topbar">
+        <img class="top-logo pixel" src={assets.logo.avif} alt="Checkpoint CCXP26" />
+        <div class="top-actions"><button class="site-status" type="button" data-action="site"><span class="status-dot"></span><span data-status-label>No ar</span><span class="switch" data-site-switch aria-hidden="true"></span></button><button type="button" class="logout" data-action="logout">Sair</button></div>
+      </header>
+      <div class="paused-banner" data-paused hidden><span data-banner-label>Site pausado</span><button class="primary small" type="button" data-action="resume">Reativar</button></div>
+      <div class="content" data-content></div>
+      <nav class="bottom-wrap" aria-label="Seções do painel"><div class="bottom-nav">
+        <button type="button" data-action="tab" data-tab="polls" aria-current="page"><img class="pixel" src={assets.poll.src} alt="" /> Enquetes</button>
+        <button type="button" data-action="tab" data-tab="photos"><img class="pixel" src={assets.camera.src} alt="" /> Fotos</button>
+      </div></nav>
+    </section>
+
+    <dialog class="admin-dialog" data-dialog aria-labelledby="dialog-title"><div class="dialog-content" data-dialog-content></div></dialog>
+    <div class="toast" role="status" aria-live="polite" data-toast></div>
+  </main>
+  <script>import '../../scripts/admin';</script>
+</BaseLayout>

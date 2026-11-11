@@ -109,6 +109,8 @@ html body { overflow: visible; overflow-x: clip; background: transparent; }
   display: flex; align-items: flex-end; gap: var(--space-2); max-width: calc(100% - 20px);
   pointer-events: none;
 }
+.story[data-phase="1"][data-poll-complete] .guide,
+.story[data-phase="2"][data-photo-submitted] .guide { display: none; }
 .story-on .guide { opacity: min(1, var(--cap) * 2); transform: translate3d(0, calc((1 - var(--cap)) * 24px), 0); }
 .guide-korok { pointer-events: auto; flex: none; width: 52px; height: 58px; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .guide-korok img { width: auto; height: 100%; transform-origin: 50% 100%; filter: drop-shadow(0 3px 0 rgb(59 33 22 / 18%)); }
@@ -134,8 +136,6 @@ html body { overflow: visible; overflow-x: clip; background: transparent; }
 }
 .chapter .screen-scroll > .page-container { flex: 1; }
 .chapter .screen-scroll:focus-visible { outline: none; }
-.chapter-next { display: grid; justify-items: center; gap: var(--space-1); width: min(calc(100% - 40px), 360px); margin: var(--space-6) auto var(--space-6); text-align: center; text-decoration: none; }
-.chapter-next.button-primary { width: min(calc(100% - 40px), 360px); }
 
 @media (prefers-reduced-motion: no-preference) {
   .chapter [data-entrance-pending] .section-icon,

@@ -64,6 +64,7 @@ async function request<T>(path: string, options: RequestInit = {}, identified = 
     const response = await fetch(`${base}/api/v1${path}`, { ...options, signal: controller.signal, headers, credentials: 'omit', cache: 'no-store' });
     if (!response.ok) {
       const body = await response.json().catch(() => null) as { error?: { code?: string; message?: string } } | null;
+      if (body?.error?.code === 'SITE_NOT_LIVE') window.dispatchEvent(new Event('checkpoint:site-status'));
       throw new ApiError(response.status, body?.error?.code ?? 'UNKNOWN', body?.error?.message ?? 'Serviço temporariamente indisponível.', response.headers.get('Retry-After'));
     }
     return await response.json() as T;

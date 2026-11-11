@@ -19,6 +19,21 @@
     "height": 260,
     "avif": "/assets/mascot/korok.70b8e471a5.avif"
   },
+  "korokBefore": {
+    "width": 514,
+    "height": 564,
+    "avif": "/assets/mascot/korokRegandoMuda.d6396d23bd.avif"
+  },
+  "korokPaused": {
+    "width": 513,
+    "height": 564,
+    "avif": "/assets/mascot/KorokMartelandoPlaca.90a75bec63.avif"
+  },
+  "korokEnded": {
+    "width": 467,
+    "height": 564,
+    "avif": "/assets/mascot/KorokPorDoSol.12e3ce490b.avif"
+  },
   "house": {
     "width": 131,
     "height": 128,

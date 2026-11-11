@@ -1,0 +1,41 @@
+---
+import assets from '../assets/official-assets.json';
+import '../styles/site-gate.css';
+
+const screens = [
+  { status: 'before', image: assets.korokBefore, label: 'A aventura começa em breve', title: 'Estamos preparando algo especial!', message: 'Nosso cantinho está crescendo! O site abre durante a CCXP. Volte no dia do evento para viver essa aventura com a gente.', badge: 'Nos vemos na CCXP 2026' },
+  { status: 'paused', image: assets.korokPaused, label: 'Pausa rápida', title: 'Um pequeno ajuste na aventura', message: 'Estamos cuidando de alguns detalhes para deixar tudo pronto de novo. Tente voltar daqui a pouquinho!' },
+  { status: 'ended', image: assets.korokEnded, label: 'Fim de uma aventura', title: 'Essa aventura ficou na memória!', message: 'A CCXP acabou, mas os encontros e as lembranças ficam. Obrigado por fazer parte dessa história com a gente!', badge: 'Obrigado por jogar com a gente' },
+];
+---
+
+<section class="site-gate" data-site-gate aria-label="Estado do site">
+  <div class="site-gate__page">
+    <img class="site-gate__logo" src={assets.logo.avif} width={assets.logo.width} height={assets.logo.height} alt="Checkpoint CCXP26" />
+    <div class="site-gate__announcement" aria-live="polite" aria-atomic="true">
+      <div class="site-gate__loading" data-site-panel="loading">
+        <h1>Carregando…</h1>
+        <p>Consultando o estado do site.</p>
+        <noscript>Ative o JavaScript para consultar o estado do site.</noscript>
+      </div>
+      {screens.map((screen) => (
+        <div class:list={['site-gate__screen', `site-gate__screen--${screen.status}`]} data-site-panel={screen.status} hidden>
+          <div class="site-gate__art" aria-hidden="true">
+            <img data-site-image={screen.image.avif} width={screen.image.width} height={screen.image.height} alt="" decoding="async" />
+          </div>
+          <p class="site-gate__eyebrow">{screen.label}</p>
+          <h1 tabindex="-1">{screen.title}</h1>
+          <p class="site-gate__message">{screen.message}</p>
+          {screen.badge && <p class="site-gate__badge">{screen.badge}</p>}
+          {screen.status === 'paused' && <button class="site-gate__retry button-primary" type="button" data-site-retry>Tentar novamente</button>}
+        </div>
+      ))}
+      <div class="site-gate__loading" data-site-panel="error" hidden>
+        <h1>Não foi possível conectar</h1>
+        <p>Confira sua conexão e tente novamente.</p>
+        <button class="site-gate__retry button-primary" type="button" data-site-retry>Tentar novamente</button>
+      </div>
+    </div>
+    <p class="site-gate__footer">Feito com carinho <span aria-hidden="true">•</span> Checkpoint CCXP26</p>
+  </div>
+</section>

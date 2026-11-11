@@ -75,7 +75,7 @@ if (trigger && input && preview && image && crop && cropHint && clear && submit 
     adjusted = true; position();
   });
   async function croppedFile(original: File): Promise<File> {
-    if (!adjusted || !image!.naturalWidth || !image!.naturalHeight) return original;
+    if (!adjusted || !image!.naturalWidth || !image!.naturalHeight) return compressPhoto(original);
     const iw = image!.naturalWidth, ih = image!.naturalHeight;
     const aspect = 360 / 330;
     const cw = Math.min(iw, ih * aspect), ch = cw / aspect;
@@ -83,12 +83,25 @@ if (trigger && input && preview && image && crop && cropHint && clear && submit 
     const scale = Math.min(1, 2048 / Math.max(cw, ch));
     canvas.width = Math.max(1, Math.round(cw * scale)); canvas.height = Math.max(1, Math.round(ch * scale));
     const context = canvas.getContext('2d');
-    if (!context) throw new Error('Não foi possível ajustar a foto neste navegador. Escolha outra foto.');
+    if (!context) throw new Error('Não foi possível preparar o recorte. Escolha a foto novamente para enviá-la sem recorte.');
     context.drawImage(image!, (iw - cw) * x, (ih - ch) * y, cw, ch, 0, 0, canvas.width, canvas.height);
     const type = original.type === 'image/png' ? 'image/png' : 'image/jpeg';
     const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, type, .92));
-    if (!blob || blob.type !== type || !blob.size || blob.size > 10 * 1024 * 1024) throw new Error('Não foi possível preparar o recorte. Escolha outra foto ou tente enviar a original.');
+    if (!blob || blob.type !== type || !blob.size || blob.size > 10 * 1024 * 1024) throw new Error('Não foi possível preparar o recorte. Escolha a foto novamente para enviá-la sem recorte.');
     return new File([blob], type === 'image/png' ? 'foto.png' : 'foto.jpg', { type });
+  }
+  async function compressPhoto(original: File): Promise<File> {
+    // Keep transparent and unsupported formats untouched; avoid exhausting memory on large phones' images.
+    if (original.type !== 'image/jpeg' || !image!.naturalWidth || !image!.naturalHeight || image!.naturalWidth * image!.naturalHeight > 24000000) return original;
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = image!.naturalWidth; canvas.height = image!.naturalHeight;
+      const context = canvas.getContext('2d'); if (!context) return original;
+      context.drawImage(image!, 0, 0);
+      const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', .86));
+      if (!blob || blob.type !== 'image/jpeg' || !blob.size || blob.size >= original.size) return original;
+      return new File([blob], 'foto.jpg', { type:'image/jpeg' });
+    } catch { return original; }
   }
   function reset() {
     consent!.checked = false;

@@ -4,6 +4,7 @@
 // e falhas deixam a composição estática completa (nada fica `hidden`).
 import { screenEntrances } from './screen-entrance';
 import { activate } from './defer-images';
+import { getParticipation, subscribeParticipation } from './participation';
 
 const root = document.documentElement;
 const story = document.querySelector<HTMLElement>('[data-story]');
@@ -11,6 +12,22 @@ const track = document.querySelector<HTMLElement>('[data-story-track]');
 const stage = document.querySelector<HTMLElement>('[data-story-stage]');
 const chapters = [...document.querySelectorAll<HTMLElement>('.chapter')];
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+
+function updateGuideState(): void {
+  if (!story) return;
+  const participation = getParticipation();
+  story.toggleAttribute('data-poll-complete', participation?.resultsUnlocked === true);
+  story.toggleAttribute('data-photo-submitted', participation?.photoStatus === 'submitted');
+}
+subscribeParticipation(updateGuideState);
+updateGuideState();
+
+if (story && reduce.matches) {
+  const phaseObserver = new IntersectionObserver(entries => {
+    for (const entry of entries) if (entry.isIntersecting) story.dataset.phase = String(chapters.indexOf(entry.target as HTMLElement) + 1);
+  }, { threshold: 0.5 });
+  chapters.forEach(chapter => phaseObserver.observe(chapter));
+}
 
 const clamp = (v: number, a = 0, b = 1): number => Math.min(b, Math.max(a, v));
 const smooth = (t: number): number => t * t * (3 - 2 * t);
@@ -65,6 +82,7 @@ if (story && track && stage && !reduce.matches) {
   function setPhase(i: number): void {
     const first = currentPhase === -1;
     currentPhase = i;
+    story!.dataset.phase = String(i);
     dockLinks.forEach((a, n) => n === i ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
     if (guideText) guideText.textContent = lines[i] ?? lines[0];
     if (first) return;
@@ -145,13 +163,14 @@ if (story && track && stage && !reduce.matches) {
   let direction = 1;
   const stops = (): number[][] => {
     const vh = innerHeight;
-    const heroEnd = track.offsetTop + track.offsetHeight - vh;
-    const tops = chapters.map(c => c.offsetTop);
+    const trackTop = track.getBoundingClientRect().top + scrollY;
+    const heroEnd = trackTop + track.offsetHeight - vh;
+    const tops = chapters.map(c => c.getBoundingClientRect().top + scrollY);
     // Pontos de repouso da abertura: 0 (logo) e HOLD (card no alto + Korok falando).
     // Qualquer parada entre eles, ou depois, é puxada para o ponto seguinte/anterior.
-    const hold = track.offsetTop + heroEnd * 0.8;
-    const gaps = [[track.offsetTop, hold], [hold, tops[0]]];
-    chapters.forEach((c, i) => { if (i < chapters.length - 1) gaps.push([c.offsetTop + c.offsetHeight - vh, tops[i + 1]]); });
+    const hold = trackTop + (heroEnd - trackTop) * 0.8;
+    const gaps = [[trackTop, hold], [hold, tops[0]]];
+    chapters.forEach((c, i) => { if (i < chapters.length - 1) gaps.push([tops[i] + c.offsetHeight - vh, tops[i + 1]]); });
     return gaps.filter(([a, b]) => b - a > 8);
   };
   const settle = (): void => {

@@ -1,13 +1,15 @@
 ---
 import '../styles/global.css';
 import uiFont from '../assets/fonts/inter-latin-variable.woff2?url';
+import SiteGate from '../components/SiteGate.astro';
 
 interface Props {
   title: string;
   description: string;
+  siteStatus?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, siteStatus = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -24,7 +26,8 @@ const { title, description } = Astro.props;
   </head>
   <body>
     <noscript><style>img[data-src] { display: none; }</style></noscript>
-    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
-    <slot />
+    {siteStatus ? <div data-site-content inert><a class="skip-link" href="#conteudo">Pular para o conteúdo</a><slot /></div> : <><a class="skip-link" href="#conteudo">Pular para o conteúdo</a><slot /></>}
+    {siteStatus && <SiteGate />}
+    {siteStatus && <script>import '../scripts/site-status';</script>}
   </body>
 </html>

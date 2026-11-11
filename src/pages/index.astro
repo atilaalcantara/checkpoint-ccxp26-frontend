@@ -1,74 +1,114 @@
 ---
+// App completo (versão animada): uma única jornada de scroll — entrar na CCXP,
+// responder, fotografar. Fica parado aqui até o dia da CCXP26; para ativar, ele
+// substitui src/pages/index.astro. Coreografia: styles/story.css + scripts/story-scroll.ts.
+import '../styles/story.css';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ExperienceProgress from '../components/ExperienceProgress.astro';
+import FotosScreen from '../components/FotosScreen.astro';
+import EnqueteScreen from '../components/EnqueteScreen.astro';
+import ScreenInfo from '../components/ScreenInfo.astro';
+import backgroundSmall from '../assets/home-background-390.avif';
+import backgroundLarge from '../assets/home-background-520.avif';
+import assets from '../assets/official-assets.json';
 ---
 
 <BaseLayout
-  title="Checkpoint CCXP26 — Em breve"
-  description="Quase lá! O Checkpoint CCXP26 será liberado no dia da CCXP26."
+  title="Checkpoint CCXP26 — Nosso diário de aventuras"
+  description="Você encontrou o Checkpoint CCXP26! Nosso diário de aventuras na CCXP."
+  siteStatus={true}
 >
-  <main id="conteudo" class="soon">
-    <img class="logo" src="/assets/branding/checkpoint-ccxp26-logo.c062877445.avif" alt="Checkpoint CCXP26" width="360" height="200" />
-    <div class="mascot-composition">
-      <img class="mascot" src="/assets/mascot/korok.70b8e471a5.avif" alt="Korok em pixel art" width="120" height="120" />
-      <div class="speech-bubble">
-        <p><span class="greeting">Yahaha!</span> Estamos quase lá!</p>
-        <p>O site será liberado só na <strong>CCXP26</strong>. Volte no grande dia!</p>
+  <div class="story" data-story>
+    <main id="conteudo" tabindex="-1" aria-label="Checkpoint CCXP26">
+      <!-- Capítulo 1: entrar na CCXP. Tudo é legível sem scroll-scrub / sem JS. -->
+      <div class="story-track" data-story-track>
+        <section id="inicio" class="story-stage" data-story-stage aria-labelledby="home-title">
+          <div class="clouds" aria-hidden="true">
+            <svg class="cloud cloud-a" viewBox="0 0 48 16" shape-rendering="crispEdges"><path fill="#f6b98d" d="M6 8h4V6h4V4h8V2h8v2h4v2h4v4h4v2H2v-2h4z"/><path fill="#fde0c4" d="M8 8h4V6h4V4h6V3h6v1h4v2h2v3H6z"/></svg>
+            <svg class="cloud cloud-b" viewBox="0 0 48 16" shape-rendering="crispEdges"><path fill="#f6b98d" d="M6 8h4V6h4V4h8V2h8v2h4v2h4v4h4v2H2v-2h4z"/><path fill="#fde0c4" d="M8 8h4V6h4V4h6V3h6v1h4v2h2v3H6z"/></svg>
+            <svg class="cloud cloud-c" viewBox="0 0 48 16" shape-rendering="crispEdges"><path fill="#f6b98d" d="M6 8h4V6h4V4h8V2h8v2h4v2h4v4h4v2H2v-2h4z"/><path fill="#fde0c4" d="M8 8h4V6h4V4h6V3h6v1h4v2h2v3H6z"/></svg>
+          </div>
+
+          <div class="scene-box">
+            <div class="camera" data-camera>
+              <img
+                class="scene"
+                src={backgroundSmall.src}
+                srcset={`${backgroundSmall.src} 390w, ${backgroundLarge.src} 520w`}
+                sizes="(max-width: 520px) 100vw, 520px"
+                width={backgroundLarge.width}
+                height={backgroundLarge.height}
+                alt=""
+                aria-hidden="true"
+                fetchpriority="high"
+                loading="eager"
+              />
+              <div class="character-stage" data-walkers>
+                <div class="character-composition" data-character-composition data-current data-level-index="0">
+                  <img class="character character-juh" src={assets.juh.avif} width={assets.juh.width} height={assets.juh.height} alt="Juh em pixel art" loading="eager" decoding="async" />
+                  <img class="character character-atila" src={assets.atila.avif} width={assets.atila.width} height={assets.atila.height} alt="Átila em pixel art" loading="eager" decoding="async" />
+                </div>
+              </div>
+            </div>
+            <div class="plate" data-plate><ExperienceProgress /></div>
+
+          </div>
+
+          <header class="identity">
+            <h1 id="home-title" class="brand">
+              <img class="brand-image" src={assets.logo.avif} width={assets.logo.width} height={assets.logo.height}
+                alt="Checkpoint CCXP26" loading="eager" fetchpriority="high" decoding="async" />
+            </h1>
+            <p class="subtitle">Nosso diário de aventuras<br />na CCXP26!</p>
+          </header>
+
+          <ScreenInfo title="Início" text="Somos um casal que adora viver a CCXP juntos! Criei este cantinho para a gente interagir com vocês, resolver nossas brincadeiras de casal e construir um álbum das nossas aventuras por aqui." />
+
+          <a class="scroll-hint" href="#enquete" data-scroll-hint>
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+              <path d="m5 5 9 9 9-9M5 14l9 9 9-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span>Role para participar</span>
+          </a>
+        </section>
+      </div>
+
+
+      <section id="enquete" class="experience-screen chapter" aria-labelledby="poll-title">
+        <div class="screen-scroll" data-screen-scroll tabindex="0" role="region" aria-label="Conteúdo de Enquete">
+          <ScreenInfo title="Enquete" text="Sabe aquelas discussões de brincadeira que todo casal tem? A gente trouxe algumas das nossas para você ajudar a colocar um ponto final nelas. Escolha seu lado!" />
+          <EnqueteScreen />
+        </div>
+      </section>
+
+
+      <section id="fotos" class="experience-screen chapter" aria-labelledby="photos-title">
+        <div class="screen-scroll" data-screen-scroll tabindex="0" role="region" aria-label="Conteúdo de Fotos">
+          <ScreenInfo title="Fotos" text="Flagrou a gente pela CCXP? Mande sua foto para fazer parte da nossa aventura! Aqui aparecem as mais recentes, mas todas serão recebidas com muito carinho para formar o nosso álbum depois." />
+          <FotosScreen />
+        </div>
+      </section>
+    </main>
+
+    <div class="guide" data-guide data-open>
+      <button type="button" class="guide-korok" data-guide-toggle aria-label="Korok: mostrar dica">
+        <img src={assets.korok.avif} width={assets.korok.width} height={assets.korok.height} alt="" aria-hidden="true" decoding="async" />
+      </button>
+      <div class="guide-bubble" role="status" aria-live="polite" data-guide-bubble>
+        <span class="greeting">Yahaha!</span>
+        <span data-guide-text>Role para baixo e comece!</span>
       </div>
     </div>
-  </main>
+
+    <nav class="dots" aria-label="Fases">
+      <a href="#inicio" data-dock-link="inicio" aria-current="page"><span class="visually-hidden">Início</span></a>
+      <a href="#enquete" data-dock-link="enquete"><span class="visually-hidden">Enquete</span></a>
+      <a href="#fotos" data-dock-link="fotos"><span class="visually-hidden">Fotos</span></a>
+    </nav>
+  </div>
 </BaseLayout>
 
-<style>
-  .soon {
-    min-height: 100dvh;
-    display: grid;
-    align-content: center;
-    justify-items: center;
-    gap: var(--space-8);
-    padding: var(--space-8) var(--content-gutter);
-    background: var(--color-bg);
-    color: var(--color-text);
-    text-align: center;
-  }
-  .logo { width: min(100%, var(--logo-max-width)); height: auto; }
-  .mascot-composition {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    gap: var(--space-5);
-    width: min(100%, var(--content-max));
-  }
-  .mascot { width: 96px; height: auto; image-rendering: pixelated; }
-  .speech-bubble {
-    position: relative;
-    display: grid;
-    gap: var(--space-2);
-    padding: var(--space-4);
-    border: var(--stroke);
-    border-radius: var(--radius-xl);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-lift);
-    font-family: var(--font-ui);
-    line-height: 1.4;
-  }
-  .speech-bubble::before {
-    content: '';
-    position: absolute;
-    left: calc(-1 * var(--space-2));
-    top: 50%;
-    width: var(--space-4);
-    height: var(--space-4);
-    border-left: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
-    background: var(--color-surface);
-    transform: translateY(-50%) rotate(45deg);
-  }
-  .speech-bubble p { position: relative; margin: 0; }
-  .greeting {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 2rem;
-    color: var(--color-olive);
-  }
-  strong { color: var(--color-olive-deep); }
-</style>
+<script>
+  import '../scripts/progression-ui';
+  import '../scripts/story-scroll';
+</script>
