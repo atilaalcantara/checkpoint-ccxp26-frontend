@@ -1,0 +1,30 @@
+---
+const title = 'Autenticação Admin — Checkpoint CCXP26';
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" /><title>{title}</title>
+    <style>
+      :root{font-family:Inter,system-ui,sans-serif;color:#20252d;background:#f4f6f8}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px}.card{width:min(100%,620px);background:white;border:1px solid #dce2e8;border-radius:18px;padding:32px;box-shadow:0 16px 48px #18253a12}h1{margin:0 0 8px;font-size:26px}p{color:#596575;line-height:1.55}.grid{display:grid;gap:14px;margin:20px 0}.panel{padding:18px;border:1px solid #e1e6ec;border-radius:12px}label{display:block;font-size:14px;font-weight:650;margin:10px 0 6px}input,select{width:100%;padding:11px 12px;border:1px solid #bfc9d4;border-radius:8px;font:inherit}button{border:0;border-radius:8px;background:#2454a6;color:white;padding:12px 16px;font:inherit;font-weight:650;cursor:pointer}button.secondary{background:#e9eef5;color:#273447;margin-left:8px}button:disabled{opacity:.55;cursor:wait}.actions{margin-top:14px}.status{min-height:24px;margin-top:16px;font-weight:600}.hint{font-size:13px}.hidden{display:none!important}code{overflow-wrap:anywhere}
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>Teste de autenticação Admin</h1><p>Cadastro inicial de Passkeys e validação da sessão com cookie HttpOnly.</p>
+      <section id="setup" class="grid hidden" aria-label="Cadastro inicial">
+        <div class="panel"><strong>Cadastro inicial</strong><p class="hint">Disponível somente enquanto o bootstrap estiver habilitado.</p>
+          <label for="admin">Administrador</label><select id="admin"><option value="5f3f0000-0000-4000-8000-000000000001">Átila</option><option value="5f3f0000-0000-4000-8000-000000000002">Juh</option></select>
+          <label for="bootstrap">Segredo de bootstrap</label><input id="bootstrap" type="password" autocomplete="off" />
+          <div class="actions"><button id="register">Criar Passkey</button></div></div>
+      </section>
+      <section id="login" class="panel"><strong>Login</strong><p class="hint">Use uma credencial descobrível salva para este domínio.</p><button id="loginButton">Entrar com Passkey</button></section>
+      <section id="session" class="panel hidden"><strong>Autenticado com sucesso</strong><p id="who"></p><p id="details" class="hint"></p><button id="test">Testar sessão</button><button id="logout" class="secondary">Sair</button></section>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </main>
+    <script>
+      import '../../scripts/admin-auth-test';
+    </script>
+  </body>
+</html>
