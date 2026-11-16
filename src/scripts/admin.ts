@@ -1,4 +1,4 @@
-import { request, session, passkeyLogin, devLogin, logout, AdminError } from './admin-api';
+import { request, session, passkeyLogin, passkeyRegister, authConfig, devLogin, logout, AdminError } from './admin-api';
 type Poll = { id: string; question: string; a: string; b: string; active: boolean; assigned?: boolean };
 type Photo = { id: string; src: string; date: string };
 type Status = 'live' | 'before' | 'paused' | 'ended';
@@ -6,6 +6,9 @@ type Status = 'live' | 'before' | 'paused' | 'ended';
 const root = document.querySelector<HTMLElement>('[data-admin]')!;
 const login = root.querySelector<HTMLElement>('[data-login]')!;
 const workspace = root.querySelector<HTMLElement>('[data-workspace]')!;
+authConfig().then(config => {
+  root.querySelector<HTMLButtonElement>('[data-action="register"]')!.hidden = config.publicPasskeyRegistrationEnabled !== true;
+}).catch(() => {});
 const content = root.querySelector<HTMLElement>('[data-content]')!;
 const dialog = root.querySelector<HTMLDialogElement>('[data-dialog]')!;
 const dialogContent = root.querySelector<HTMLElement>('[data-dialog-content]')!;
@@ -121,7 +124,8 @@ root.addEventListener('click', async event => {
   const action = button.dataset.action, id = button.dataset.id;
   try {
   if (action === 'login' || action === 'dev-login') { button.disabled = true; try { if (action === 'login') await passkeyLogin(); else await devLogin(); await load(); login.hidden = true; workspace.hidden = false; } finally { button.disabled = false; } }
-  else if (action === 'logout') { await logout(); workspace.hidden = true; login.hidden = false; root.querySelector<HTMLButtonElement>('[data-action="login"]')?.focus(); }
+   else if (action === 'register') { button.disabled = true; try { await passkeyRegister(); root.querySelector<HTMLElement>('[data-login-status]')!.textContent = 'Passkey cadastrada. Use Entrar com Passkey para acessar.'; } finally { button.disabled = false; } }
+   else if (action === 'logout') { await logout(); workspace.hidden = true; login.hidden = false; root.querySelector<HTMLButtonElement>('[data-action="login"]')?.focus(); }
   else if (action === 'tab') { tab = button.dataset.tab === 'photos' ? 'photos' : 'polls'; state.page=1; await load(); }
   else if (action === 'previous' || action === 'next') { state.page += action === 'next' ? 1 : -1; await load(); }
   else if (action === 'filter') { filter = button.dataset.filter as typeof filter; render(); }
@@ -142,6 +146,6 @@ root.addEventListener('click', async event => {
   else if (action === 'site') { openDialog(`<div class="handle"></div><div class="confirm"><h2 id="dialog-title">Estado do site</h2><p>Escolha o que os visitantes vão ver.</p>${(Object.keys(labels) as Status[]).map(s => `<button class="secondary status-choice" data-action="set-status" data-status="${s}">${labels[s]}${state.status === s ? ' · atual' : ''}</button>`).join('')}<button class="secondary status-choice" data-action="close">Cancelar</button></div>`); }
   else if (action === 'resume' || action === 'set-status') { const status = action === 'resume' ? 'live' : button.dataset.status as Status; if (status === state.status) { closeDialog(); return; } openDialog(`<div class="handle"></div><div class="confirm"><h2 id="dialog-title">Alterar estado?</h2><p>O site ficará em: ${labels[status]}.</p><div class="dialog-actions"><button class="secondary" data-action="close">Cancelar</button><button class="primary" data-action="confirm-status" data-status="${status}">Confirmar</button></div></div>`); }
   else if (action === 'confirm-status') { await request('/site-status','PUT',{status:button.dataset.status}); closeDialog(); await load(); notify('Estado atualizado'); }
-  } catch (error) { if (action === 'login' || action === 'dev-login') root.querySelector<HTMLElement>('[data-login-status]')!.textContent = error instanceof Error ? error.message : 'Não foi possível entrar.'; else handleError(error); }
+   } catch (error) { if (action === 'login' || action === 'dev-login' || action === 'register') root.querySelector<HTMLElement>('[data-login-status]')!.textContent = error instanceof Error ? error.message : 'Não foi possível concluir.'; else handleError(error); }
 });
 void session().then(async () => { await load(); login.hidden=true; workspace.hidden=false; }).catch(() => {});

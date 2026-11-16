@@ -13,6 +13,7 @@ export async function getCsrf() { csrf = (await request<{token:string}>('/auth/c
 export async function session() { await request('/auth/me'); await getCsrf(); }
 export async function devLogin() { await request('/auth/dev-login', 'POST'); await getCsrf(); }
 export async function logout() { await request('/auth/logout','POST'); csrf = ''; }
+export async function authConfig() { return request<{publicPasskeyRegistrationEnabled:boolean}>('/auth/config'); }
 const decode = (value:string) => Uint8Array.from(atob(value.replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(value.length/4)*4,'=')), c => c.charCodeAt(0));
 const encode = (value:ArrayBuffer | null) => value ? btoa(String.fromCharCode(...new Uint8Array(value))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'') : null;
 export async function passkeyLogin() {
@@ -25,3 +26,11 @@ export async function passkeyLogin() {
   await getCsrf();
 }
 export { request };
+export async function passkeyRegister() {
+  const options = await request<Omit<PublicKeyCredentialCreationOptions,'challenge'|'user'|'excludeCredentials'> & {challenge:string;user:Omit<PublicKeyCredentialUserEntity,'id'> & {id:string};excludeCredentials?:{id:string;type:PublicKeyCredentialType;transports?:AuthenticatorTransport[]}[]}>('/passkeys/register/options','POST');
+  const publicKey = { ...options, challenge:decode(options.challenge), user:{...options.user,id:decode(options.user.id)}, excludeCredentials:options.excludeCredentials?.map(item => ({...item,id:decode(item.id)})) };
+  const credential = await navigator.credentials.create({publicKey}) as PublicKeyCredential | null;
+  if (!credential) throw new Error('O cadastro não foi concluído. Tente novamente.');
+  const response = credential.response as AuthenticatorAttestationResponse;
+  await request('/passkeys/register/verify','POST',{id:credential.id,rawId:encode(credential.rawId),type:credential.type,clientExtensionResults:credential.getClientExtensionResults(),response:{clientDataJSON:encode(response.clientDataJSON),attestationObject:encode(response.attestationObject),transports:response.getTransports?.() ?? []}});
+}

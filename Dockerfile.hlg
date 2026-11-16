@@ -1,0 +1,16 @@
+FROM node:24-alpine AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+ARG PUBLIC_PRIVACY_EMAIL=
+# HLG is always same-origin; no configurable API URL or production fallback.
+ENV PUBLIC_API_URL= PUBLIC_PRIVACY_EMAIL=$PUBLIC_PRIVACY_EMAIL
+RUN npm run build
+
+FROM nginx:1.27-alpine
+COPY deploy/nginx.hlg.conf /etc/nginx/conf.d/default.conf
+COPY deploy/security-headers.conf /etc/nginx/snippets/checkpoint-security-headers.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 CMD wget -q --spider http://127.0.0.1/ || exit 1

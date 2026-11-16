@@ -1,0 +1,79 @@
+name: HLG CI/CD
+
+on:
+  push:
+    branches: [homologacao]
+
+concurrency:
+  group: checkpoint-hlg-web
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  IMAGE: ghcr.io/atilaalcantara/checkpoint-web
+  KNOWN_HOST: oracle.atilaalcantara.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOyLkQWog66Y5uXF5pBwM0Q5WsggzfB8P9KB/Rgx788e
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: node --test tests/*.test.mjs
+      - run: npm run build
+        env:
+          PUBLIC_API_URL: ''
+      - run: bash -n deploy/hlg.sh
+
+  deploy:
+    needs: test
+    environment: homologation
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.hlg
+          platforms: linux/arm64
+          push: true
+          build-args: PUBLIC_PRIVACY_EMAIL=${{ vars.PUBLIC_PRIVACY_EMAIL }}
+          tags: |
+            ${{ env.IMAGE }}:hlg-${{ github.sha }}
+            ${{ env.IMAGE }}:hlg
+          cache-from: type=gha,scope=hlg-web
+          cache-to: type=gha,mode=max,scope=hlg-web
+      - name: Deploy HLG (pinned host key)
+        env:
+          SSH_KEY: ${{ secrets.HLG_DEPLOY_SSH_KEY }}
+          SSH_USER: ${{ vars.HLG_SSH_USER }}
+        run: |
+          set -euo pipefail
+          [[ "$SSH_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
+          test -n "$SSH_KEY"
+          install -m 700 -d ~/.ssh
+          trap 'rm -f ~/.ssh/hlg_key' EXIT
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/hlg_key
+          printf '%s\n' "$KNOWN_HOST" > ~/.ssh/hlg_known_hosts
+          chmod 600 ~/.ssh/hlg_key ~/.ssh/hlg_known_hosts
+          ssh -i ~/.ssh/hlg_key -o BatchMode=yes -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/hlg_known_hosts \
+            -o ConnectTimeout=15 "$SSH_USER@oracle.atilaalcantara.com" \
+            deploy-web "$IMAGE:hlg-$GITHUB_SHA"

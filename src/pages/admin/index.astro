@@ -14,7 +14,8 @@ import '../../styles/admin.css';
         <h1>Acesso ao painel</h1>
         <p>Use a passkey já cadastrada para acessar o painel.</p>
         <p class="hint">Confirme sua identidade no dispositivo.</p>
-        <button class="primary login-button" type="button" data-action="login">Entrar com passkey</button>
+        <button class="primary login-button" type="button" data-action="login">Entrar com Passkey</button>
+        <button class="secondary login-button" type="button" data-action="register" hidden>Cadastrar Passkey</button>
         {import.meta.env.DEV && <button class="secondary login-button" type="button" data-action="dev-login">Entrar no ambiente local</button>}
         <p class="form-status" role="status" data-login-status></p>
         <small>Acesso restrito · Somente passkey cadastrada</small>
