@@ -9,8 +9,12 @@ const MINIMUM_PSNR_DB = 35;
 
 const original = fileURLToPath(new URL('../background.png', import.meta.url));
 const originalBytes = (await stat(original)).size;
-// Keep the vector source in src/ and publish a single AVIF favicon.
-const favicon = await sharp(fileURLToPath(new URL('../src/assets/favicon-source.svg', import.meta.url))).resize(64, 64).avif({ lossless: true }).toBuffer();
+// Trim the official logo and fit it into a square canvas for the browser tab.
+const favicon = await sharp(fileURLToPath(new URL('../source-assets/official/logoCheckpointCCXP26.png', import.meta.url)))
+  .trim({ background: '#00000000', threshold: 10 })
+  .resize(64, 64, { fit: 'contain', background: '#FFF7EF' })
+  .avif({ lossless: true })
+  .toBuffer();
 await writeFile(new URL('../public/favicon.avif', import.meta.url), favicon);
 
 await mkdir(new URL('../src/assets/', import.meta.url), { recursive: true });
