@@ -77,3 +77,11 @@ jobs:
             -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/hlg_known_hosts \
             -o ConnectTimeout=15 "$SSH_USER@oracle.atilaalcantara.com" \
             deploy-web "$IMAGE:hlg-$GITHUB_SHA"
+      - name: External HLG web and same-origin API health
+        run: |
+          for path in / /api/v1/site-status; do
+            curl --fail --silent --show-error --output /dev/null \
+              --retry 12 --retry-all-errors --retry-delay 5 --retry-max-time 180 \
+              --connect-timeout 10 --max-time 15 \
+              "https://ccxp26-hlg.atilaalcantara.com$path"
+          done

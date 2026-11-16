@@ -18,6 +18,8 @@ npm run dev              # http://localhost:4321
 No celular, use o IP do computador em `PUBLIC_API_URL` (127.0.0.1 é o próprio aparelho).
 
 ## Produção
+CI/CD HLG, configuração nginx efetivamente montada no host, checks externos HLG/PRD e situação da var de contato: [deploy/HLG.md](deploy/HLG.md).
+
 ```sh
 PUBLIC_API_URL= PUBLIC_PRIVACY_EMAIL=contato@seu-dominio npm run build
 ```
